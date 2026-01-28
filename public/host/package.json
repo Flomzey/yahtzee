@@ -1,0 +1,11 @@
+{
+  "name": "yahtzee-host",
+  "version": "1.0.0",
+  "description": "yahtzee host program ",
+  "main": "host.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Flomzey",
+  "license": "ISC"
+}
