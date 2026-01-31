@@ -1,0 +1,89 @@
+.body-box{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    margin: 0%;
+}
+
+.top-box{
+    display: flex;
+    height: 30%;
+    flex-direction: column;
+    position: relative;
+    max-height: 250px;
+    min-height: 80px;
+
+    /*coloring and design*/
+    background-color: #6d63bc;
+} 
+
+.bot-box{
+    display: flex;
+    height: 100%;
+
+    /*coloring and design*/
+    box-shadow: 0px 0px 0px 1000px rgb(34, 34, 34, 0.6) inset;
+    background-size: cover;
+    background-image: url("../images/host-background.png");
+}
+
+.foot-box{
+    display: flex;
+    height: 100px;
+
+    /*coloring and design*/
+    background-color: #3b3b3b; 
+}
+
+.title{
+    padding-top: 20px;
+    padding-bottom: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.lower-top-half{
+    display: flex;
+}
+
+.title-img{
+    width: 50%;
+    height: 100%;
+    object-fit: fill;
+}
+
+.buttons{
+    margin: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#modal{
+    display: none;
+    position: fixed;
+    inset: 0;
+    justify-content: center;
+    align-items: center;
+    
+    /*coloring and design*/
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#modal-content{
+
+    /*coloring and design*/
+    padding: 30px;
+    border-radius: 8px;
+    background-color: #3b3b3b;
+}
+
+#name-input{
+    size: 20;
+    height: 35px;
+    font-size: 20px;
+}
+
+#add-btn{
+
+}

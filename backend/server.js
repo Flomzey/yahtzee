@@ -9,22 +9,30 @@ const server = createServer((req, res) => {
   const basePath = path.resolve(__dirname, '../public');
   const requestedPath = req.url === '/' ? '/main.html' : req.url;
   const filePath = path.resolve(basePath,'.' + requestedPath);
+  console.log(filePath)
 
   fs.readFile(filePath, (err, data) => {
     if(err){
-      res.statusCode = 404;
+      res.writeHead("404", {"content-type":"text/plain"})
       res.end('Not found!');
+      console.log("not found")
       return;
     }
 
     if(!filePath.startsWith(basePath)){
-      res.statusCode = 403;
+      res.writeHead("403", {"content-type":"text/plain"})
       res.end('Forbidden');
+      console.log("forbidden")
       return;
     }
 
-    res.statusCode = 200;
-    res.end(data);
+    if(filePath.includes("images")){
+      res.writeHead("200", {"content-type":"image/png"});
+      res.end(data);
+    }else{
+      res.writeHead("200", {"content-type":"text/html"});
+      res.end(data);
+    }
   })
 });
 
