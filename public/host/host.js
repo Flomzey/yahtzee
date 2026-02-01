@@ -21,5 +21,13 @@ input.addEventListener("keydown", (e) => {
 });
 
 function updateList(){
-    
+    const botbox = document.getElementById("bot-box");
+    botbox.innerHTML = "";
+    names.forEach(name => {
+        const nameElement = document.createElement("div");
+        nameElement.classList.add("name-list-item");
+        nameElement.textContent = name;
+        console.log(name);
+        botbox.appendChild(nameElement);
+    });
 }
