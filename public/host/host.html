@@ -12,14 +12,22 @@
                 <img class="title-img" src="../images/logo.png">
             </div>
             <div class="title-lr">
-                <img src="../images/add-player.png" class="buttons" id="add-btn"></img>
+                <img src="../images/add-player.png" class="buttons" id="add-btn">
+                <img src="../images/play-ceck.png" class="buttons" id="start-btn">
             </div>
         </div>
         <div id="bot-box"></div>
         <div class="foot-box"></div>
         <div id="modal">
             <div id="modal-content">
-                <input type="text" id="name-input" placeholder="Player Name" required>
+                <div>
+                    <input type="text" id="name-input" placeholder="Player Name" required>
+                </div>
+                <div id="not-enough">
+                    <a>Not Enough Players</a>
+                    <button id="button-ok">OK</button>
+                </div>
+                
             </div>
         </div>
     </body>
