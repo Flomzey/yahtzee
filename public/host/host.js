@@ -4,6 +4,15 @@ const notEnough = document.getElementById("not-enough");
 const okButton = document.getElementById("button-ok");
 const names = [];
 
+const gameId = createGame();
+
+async function createGame() {
+    const res = await fetch("/api/game/create", {method:"POST"});
+    const data = await res.json();
+    document.getElementById("game-id").innerHTML = data;
+    return data;
+}
+
 document.getElementById("add-btn").onclick = () => {
     modal.style.display = "flex";
     input.style.display = "flex";
