@@ -2,25 +2,40 @@ const modal = document.getElementById("modal");
 const input = document.getElementById("name-input");
 const notEnough = document.getElementById("not-enough");
 const okButton = document.getElementById("button-ok");
-const names = [];
+let players = new Array;
+let gameId = "";
 
-const gameId = createGame();
+async function onOpen(){
+    gameId = await createGame();
+}
+
+onOpen();
 
 async function createGame() {
     const res = await fetch("/api/game/create", {method:"POST"});
     const data = await res.json();
-    document.getElementById("game-id").innerHTML = data;
-    return data;
+    document.getElementById("game-id").innerHTML = data.game.id;
+    return data.game.id;
 }
 
-document.getElementById("add-btn").onclick = () => {
-    modal.style.display = "flex";
-    input.style.display = "flex";
-    input.focus();
-};
+async function addPlayer(name){
+    const res = await fetch("/api/game/join",{
+        method: "POST",
+        headers : {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            gameId: gameId,
+            name: name
+        })
+    });
+    players.push(await res.json());
+    console.log(players)
+}
 
 document.getElementById("start-btn").onclick = () => {
-    if(names.length <= 1){
+    console.log(players.length)
+    if(players.length <= 1){
         modal.style.display = "flex";
         notEnough.style.display = "flex";
     }else{
@@ -33,6 +48,12 @@ okButton.onclick = () => {
     notEnough.style.display = "none";
 }
 
+document.getElementById("add-btn").onclick = () => {
+    modal.style.display = "flex";
+    input.style.display = "flex";
+    input.focus();
+};
+
 input.addEventListener("keydown", (e) => {
     if(e.key === "Escape"){
         input.value = "";
@@ -40,22 +61,22 @@ input.addEventListener("keydown", (e) => {
         input.style.display = "none";
     }
     if(e.key === "Enter" && input.value !== ""){
-        names.push(input.value);
-        input.value = "";
-        modal.style.display = "none";
-        input.style.display = "none";
-        updateList();
+        addPlayer(input.value).then(() => {
+            input.value = "";
+            modal.style.display = "none";
+            input.style.display = "none";
+            updateList();
+        });
     }
 });
 
 function updateList(){
     const botbox = document.getElementById("bot-box");
     botbox.innerHTML = "";
-    names.forEach(name => {
+    players.forEach(player => {
         const nameElement = document.createElement("div");
         nameElement.classList.add("name-list-item");
-        nameElement.textContent = name;
-        console.log(name);
+        nameElement.textContent = player[1];
         botbox.appendChild(nameElement);
     });
 }
