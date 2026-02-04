@@ -23,9 +23,9 @@ app.post("/game/join", (req, res) => {
     try{
         const newPlayer = playerJoinDto.parse(req.body);
         const data = gameSave.joinGame(newPlayer.gameId, newPlayer.name);
-        console.log(data)
         return res.status(200).json(
-            [data.id, data.name]
+            [data.id, data.name],
+            data.players
         );
     }catch(error){
         if(error instanceof z.ZodError){

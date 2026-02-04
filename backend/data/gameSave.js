@@ -35,7 +35,8 @@ export function joinGame(gameId, playerName){
         return {
             ok: true,
             id: playerId,
-            name : playerName 
+            name : playerName,
+            players : players.values()
         };
     }
     return {
