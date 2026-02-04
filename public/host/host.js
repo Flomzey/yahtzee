@@ -29,6 +29,7 @@ async function addPlayer(name){
             name: name
         })
     });
+    console.log(res);
     players.push(await res.json());
     console.log(players)
 }

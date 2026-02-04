@@ -15,18 +15,26 @@ const playerDto = z.object({
 });
 
 app.post("/create", (req, res) => {
-    return res.json(gameSave.createGame());
+    try{
+        return res.status(200).json(gameSave.createGame());
+    }catch(error){
+        console.log(`[Error] ${error.toString}`);
+        return res.status(500).json({
+            error: "something went wrong"
+        });
+    }
 });
 
 app.post("/join", (req, res) => {
     try{
         const newPlayer = playerJoinDto.parse(req.body);
+        console.log("test")
         const data = gameSave.joinGame(newPlayer.gameId, newPlayer.name);
         return res.status(200).json(
-            [data.id, data.name],
-            data.players
+            data.player
         );
     }catch(error){
+        console.log(`[Error] ${error.toString}`);
         if(error instanceof z.ZodError){
             return res.status(500).json({
                 error: "dto parse error"

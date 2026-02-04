@@ -30,17 +30,19 @@ export function createGame(){
 export function joinGame(gameId, playerName){
     if(currentGames.has(gameId)){
         const game = currentGames.get(gameId);
+        const playerId = nanoid(4); //missing logic for collision
 
-        const player = createNewPlayer(playerName);
+        const player = createNewPlayer(playerName, playerId);
         player.score = createNewScoreSheet();
 
         game.players.set(playerId, player);
+        game.lastAction = new Date();
+
         currentGames.set(gameId, game);
         console.log(game)
         return {
             ok: true,
             player: player,
-            players : players.values()
         };
     }
     return {
@@ -49,19 +51,19 @@ export function joinGame(gameId, playerName){
     }
 }
 
-function createNewPlayer(playerName){
-    const playerId = nanoid(4); //missing logic for collision
+function createNewPlayer(playerName, playerId){
     return {
         id: playerId,
         name: playerName,
         score: null,
         isTurn: false,
+        isReady: false,
         rollsLeft: 0
     }
 }
 
 function createNewScoreSheet(){
-    return{
+    return {
         one: null,
         two: null,
         three: null,
