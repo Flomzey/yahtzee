@@ -1,4 +1,5 @@
 import { nanoid } from "nanoid";
+import gameEnums from "./gameEnums.js"
 
 export let currentGames = new Map();
 
@@ -9,10 +10,11 @@ export let currentGames = new Map();
 export function createGame(){
     const gameId = nanoid(6);// missing logic for collision
     const game = {
-        id : gameId,
-        players : new Map(),
-        state : "waiting",
-        round : 0
+        id: gameId,
+        players: new Map(),
+        state: gameEnums.states.LOBBY,
+        roundsLeft: 13,
+        lastAction: new Date() //later check if newdate.getTime() - olddate.getTime() > some value in ms
     };
     currentGames.set(gameId, game);
     return {
@@ -27,15 +29,17 @@ export function createGame(){
  */
 export function joinGame(gameId, playerName){
     if(currentGames.has(gameId)){
-        const playerId = nanoid(4); //missing logic for collision
         const game = currentGames.get(gameId);
-        game.players.set(playerId, playerName);
+
+        const player = createNewPlayer(playerName);
+        player.score = createNewScoreSheet();
+
+        game.players.set(playerId, player);
         currentGames.set(gameId, game);
         console.log(game)
         return {
             ok: true,
-            id: playerId,
-            name : playerName,
+            player: player,
             players : players.values()
         };
     }
@@ -43,4 +47,40 @@ export function joinGame(gameId, playerName){
         ok: false,
         error: "game does not exist"
     }
+}
+
+function createNewPlayer(playerName){
+    const playerId = nanoid(4); //missing logic for collision
+    return {
+        id: playerId,
+        name: playerName,
+        score: null,
+        isTurn: false,
+        rollsLeft: 0
+    }
+}
+
+function createNewScoreSheet(){
+    return{
+        one: null,
+        two: null,
+        three: null,
+        four: null,
+        three: null,
+        five: null,
+        six: null,
+        threeOak: null,
+        fourOak: null,
+        fullH: null,
+        smallStr: null,
+        bigStr: null,
+        yahtzee: null,
+        chance: null
+    }
+}
+
+export default{
+    currentGames,
+    createGame,
+    joinGame
 }

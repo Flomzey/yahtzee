@@ -1,9 +1,8 @@
-const gameSave = require("./data/gameSave");
-const express = require("express");
-const z = require("zod");
+import gameSave from "../data/gameSave.js";
+import express from "express";
+import z from "zod";
 
 const app = express();
-app.use(express.json());
 
 const playerJoinDto = z.object({
     gameId : z.string(6),
@@ -15,11 +14,11 @@ const playerDto = z.object({
     name : z.string()
 });
 
-app.post("/game/create", (req, res) => {
+app.post("/create", (req, res) => {
     return res.json(gameSave.createGame());
 });
 
-app.post("/game/join", (req, res) => {
+app.post("/join", (req, res) => {
     try{
         const newPlayer = playerJoinDto.parse(req.body);
         const data = gameSave.joinGame(newPlayer.gameId, newPlayer.name);
@@ -34,9 +33,9 @@ app.post("/game/join", (req, res) => {
             });
         }
         return res.status(500).json({
-            error: error
+            error: "something went wrong"
         });
     }
 });
 
-module.exports = app;
+export default app;

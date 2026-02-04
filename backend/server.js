@@ -1,14 +1,15 @@
-const express = require("express");
-const path = require("path");
-
-const apiApp = require("./api");
-
+import express from "express";
+import path, { dirname } from "path";
+import apiRouter from "./api/index.js";
+import { fileURLToPath } from "url";
 const hostname = "127.0.0.1";
 const port = 3000;
-
 const app = express();
 
-app.use("/api", apiApp);
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+app.use(express.json());
+app.use("/api", apiRouter);
 
 const publicPath = path.join(__dirname, "../public");
 app.use(express.static(publicPath));
@@ -18,5 +19,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, hostname, () => {
-  console.log(`Server läuft auf http://${hostname}:${port}`);
+  console.log(`Server running at http://${hostname}:${port}`);
 });
