@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 import gameEnums from "./gameEnums.js"
 
-export let currentGames = new Map();
+let games = new Map();
 
 /**
  * Creates a game entry with no players
@@ -11,25 +11,50 @@ export function createGame(){
     const gameId = nanoid(6);// missing logic for collision
     const game = {
         id: gameId,
+        socketid: null,
         players: new Map(),
         state: gameEnums.states.LOBBY,
         roundsLeft: 13,
         lastAction: new Date() //later check if newdate.getTime() - olddate.getTime() > some value in ms
     };
-    currentGames.set(gameId, game);
+    games.set(gameId, game);
     return {
         ok: true,
         game: game
     }
 }
+
+/**
+ * adds the socketId to the game belonging to the gameId
+ * @param {*} gameId 
+ * @param {*} socketId 
+ * @returns true if game exists and SocketId was added, false if game doesnt exist and socketId couldn't be added
+ */
+export function setGameSocketId(gameId, socketId){
+    if(!games.has(gameId)) return false;
+    const game = games.get(gameId);
+    game.socketId = socketId;
+    return true;
+}
+
+export function getGameSocketId(gameId){
+    if(!games.has(gameId)) return null;
+    return games.get(gameId).socketId;
+}
+
+export function getPlayerName(gameId, playerId){
+    if(!games.has(gameId)) return null;
+    return games.get(gameId).players.get(playerId).name;
+}
+
 /**
  * 
  * @param {String, String} gameId playerName 
  * @returns object {ok: boolean, game: gameObject || error: String}
  */
 export function joinGame(gameId, playerName){
-    if(currentGames.has(gameId)){
-        const game = currentGames.get(gameId);
+    if(games.has(gameId)){
+        const game = games.get(gameId);
         const playerId = nanoid(4); //missing logic for collision
 
         const player = createNewPlayer(playerName, playerId);
@@ -38,7 +63,7 @@ export function joinGame(gameId, playerName){
         game.players.set(playerId, player);
         game.lastAction = new Date();
 
-        currentGames.set(gameId, game);
+        games.set(gameId, game);
         console.log(game)
         return {
             ok: true,
@@ -82,7 +107,9 @@ function createNewScoreSheet(){
 }
 
 export default{
-    currentGames,
     createGame,
-    joinGame
+    joinGame,
+    setGameSocketId,
+    getGameSocketId,
+    getPlayerName
 }
