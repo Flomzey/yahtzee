@@ -2,14 +2,22 @@ const modal = document.getElementById("modal");
 const input = document.getElementById("name-input");
 const notEnough = document.getElementById("not-enough");
 const okButton = document.getElementById("button-ok");
+const socket = io();
 let players = new Array;
 let gameId = "";
 
-async function onOpen(){
+main();
+
+async function main(){
     gameId = await createGame();
+    socket.emit("lobby:create", gameId);
 }
 
-onOpen();
+socket.on("player:joined", (playerName) => {
+    console.log(playerName + " joined")
+    players.push(playerName);
+    updateList();
+});
 
 async function createGame() {
     const res = await fetch("/api/game/create", {method:"POST"});
@@ -77,7 +85,7 @@ function updateList(){
     players.forEach(player => {
         const nameElement = document.createElement("div");
         nameElement.classList.add("name-list-item");
-        nameElement.textContent = player[1];
+        nameElement.textContent = player;
         botbox.appendChild(nameElement);
     });
 }

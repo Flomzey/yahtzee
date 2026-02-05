@@ -37,14 +37,15 @@ export function setGameSocketId(gameId, socketId){
     return true;
 }
 
+//TODO: for all get functions create object returns with actual messages
 export function getGameSocketId(gameId){
-    if(!games.has(gameId)) return null;
+    if(!games.has(gameId)) return undefined;
     return games.get(gameId).socketId;
 }
 
-export function getPlayerName(gameId, playerId){
-    if(!games.has(gameId)) return null;
-    return games.get(gameId).players.get(playerId).name;
+export function getPlayer(gameId, playerId){
+    if(!(games.has(gameId))) return undefined;
+    return games.get(gameId).players.get(playerId);
 }
 
 /**
@@ -62,24 +63,23 @@ export function joinGame(gameId, playerName){
 
         game.players.set(playerId, player);
         game.lastAction = new Date();
-
         games.set(gameId, game);
-        console.log(game)
         return {
             ok: true,
             player: player,
         };
-    }
-    return {
-        ok: false,
-        error: "game does not exist"
+    }else{
+        return {
+            ok: false,
+            error: "game does not exist"
+        };
     }
 }
 
 function createNewPlayer(playerName, playerId){
     return {
         id: playerId,
-        name: playerName,
+        playerName: playerName,
         score: null,
         isTurn: false,
         isReady: false,
@@ -111,5 +111,5 @@ export default{
     joinGame,
     setGameSocketId,
     getGameSocketId,
-    getPlayerName
+    getPlayer
 }

@@ -7,7 +7,7 @@ const idButton = document.getElementById("modal-button-id");
 const nameButton = document.getElementById("modal-button-name");
 const params = new URLSearchParams(window.location.search);
 let gameId = params.get("gameId");
-let name = "";
+let playerName = "";
 
 main();
 
@@ -15,14 +15,17 @@ async function main(){
     modal.style.display = "flex";
     if(gameId === null){
         gameId = await askCode();
-        name = await askName();
+        playerName = await askName();
     }else{
-        name = await askName();
+        playerName = await askName();
     }
     modal.style.display = "none";
-    console.log(`GameId:${gameId} PlayerName:${name}`);
-    const res = await joinGame();
-    console.log(res);
+    console.log(`GameId:${gameId} PlayerName:${playerName}`);
+    sessionStorage.setItem("gameId", gameId);
+    joinGame()
+    .then(res => res.json())
+    .then(data => sessionStorage.setItem("playerId", data.playerId))
+    .then(() => window.location.href = "../game");
 }
 
 async function askCode(){
@@ -80,18 +83,15 @@ async function askName(){
 }
 
 async function joinGame(){
-    return new Promise((resolve) => {
-        const res = fetch("/api/game/join", {
-            method: "POST",
-            headers : {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                gameId: gameId,
-                name: name
-            })
-        });
-
+    return fetch("/api/game/join", {
+        method: "POST",
+        headers : {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            gameId: gameId,
+            playerName: playerName
+        })
     });
 }
 

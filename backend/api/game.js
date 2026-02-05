@@ -6,19 +6,19 @@ const app = express();
 
 const playerJoinDto = z.object({
     gameId : z.string(6),
-    name : z.string()
+    playerName : z.string()
 });
 
-const playerDto = z.object({
-    id : z.string(4),
-    name : z.string()
+const getPlayerDto = z.object({
+    gameId: z.string(6),
+    playerId : z.string(4)
 });
 
 app.post("/create", (req, res) => {
     try{
         return res.status(200).json(gameSave.createGame());
     }catch(error){
-        console.log(`[Error] ${error.toString}`);
+        console.log(`[Error] ${error}`);
         return res.status(500).json({
             error: "something went wrong"
         });
@@ -28,11 +28,10 @@ app.post("/create", (req, res) => {
 app.post("/join", (req, res) => {
     try{
         const newPlayer = playerJoinDto.parse(req.body);
-        console.log("test")
-        const data = gameSave.joinGame(newPlayer.gameId, newPlayer.name);
-        return res.status(200).json(
-            data.player
-        );
+        const data = gameSave.joinGame(newPlayer.gameId, newPlayer.playerName);
+        return res.status(200).json({
+            playerId: data.player.id
+        });
     }catch(error){
         console.log(`[Error] ${error.toString}`);
         if(error instanceof z.ZodError){
@@ -45,5 +44,26 @@ app.post("/join", (req, res) => {
         });
     }
 });
+
+app.post("/game/getPlayer", (req, res) => {
+    try{
+        const playerData = getPlayerDto.parse(req.body);
+        const player = gameSave.getPlayer(playerData.gameId, playerData.playerId);
+
+        return res.status(200).json({
+            player: player
+        })
+    }catch(error){
+        if(error instanceof z.ZodError){
+            return res.status(500).json({
+                error: "dto parse error"
+            });
+        }
+        return res.status(500).json({
+            error: "something went wrong"
+        });
+    }
+
+})
 
 export default app;
