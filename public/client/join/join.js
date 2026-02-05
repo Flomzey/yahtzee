@@ -6,19 +6,16 @@ const nameInput = document.getElementById("modal-input-name");
 const idButton = document.getElementById("modal-button-id");
 const nameButton = document.getElementById("modal-button-name");
 const params = new URLSearchParams(window.location.search);
-let gameId = params.get("gameId");
+let gameId = "";
 let playerName = "";
 
 main();
 
 async function main(){
     modal.style.display = "flex";
-    if(gameId === null){
-        gameId = await askCode();
-        playerName = await askName();
-    }else{
-        playerName = await askName();
-    }
+    gameId = await checkGameId(params.get("gameId"));
+    console.log(gameId);
+    playerName = await askName();
     modal.style.display = "none";
     console.log(`GameId:${gameId} PlayerName:${playerName}`);
     sessionStorage.setItem("gameId", gameId);
@@ -28,42 +25,62 @@ async function main(){
     .then(() => window.location.href = "../game");
 }
 
-async functioin main(){
-    modal.style.display = "flex";
-    if(gameId === null){
-        gameId = await askCode();
-        res = await ifGameExists();
+async function checkGameId(id){
+    if(id !== null){
+        res = await ifGameExists(id);
+        data = await res.json();
+        if(data.ok){
+            return id;
+        }else{
+            return await wrongGameId();
+        }
     }
+    return await wrongGameId();
+}
+
+async function wrongGameId(){
+    let id = "";
+    do{
+        id = await askCode();
+        res = await ifGameExists(id);
+        data = await res.json();
+        if(data.reason === "playing"){
+            console.log(data.reason)
+            //TODO: UI Feedback
+        }
+        if(data.reason === "noexist"){
+            console.log(data.reason)
+            //TODO: UI Feedback
+        }
+    }while(!data.ok)
+    return id;
 }
 
 async function askCode(){
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
         idModal.style.display = "flex";
 
-        const handler = (e) => {
-            const input = idInput.value;
-            if(e.type === "keydown"){
-                if(e.key === "Enter" && input !== ""){
-                    idInput.value = "";
-                    idModal.style.display = "none";
-                    idInput.removeEventListener("keydown", handler);
-                    resolve(input);
-                }
-            }
-            if(e.type === "click" && input !== ""){
-                idInput.value = "";
-                idModal.style.display = "none";
-                idInput.removeEventListener("click", handler);
-                resolve(input);
-            }
+        const handlerClick = () => finish();
+        const handlerKey = (e) => {
+            if(e.key === "Enter") finish();
         };
-        idButton.addEventListener("click", handler);
-        idInput.addEventListener("keydown", handler);
 
+        const finish = () => {
+            const input = idInput.value.trim();
+            if(input === "") return;
+            idInput.value = "";
+            idModal.style.display = "none";
+            idButton.removeEventListener("click", handlerClick);
+            idInput.removeEventListener("keydown", handlerKey);
+            resolve(input);
+        };
+
+        idButton.addEventListener("click", handlerClick);
+        idInput.addEventListener("keydown", handlerKey);
     });
 }
 
-async function askName(){
+async function askName(){ //TODO: look at upper function
     return new Promise((resolve) => {
         nameModal.style.display = "flex";
 
@@ -90,15 +107,15 @@ async function askName(){
     });
 }
 
-async function ifGameExists(){
+async function ifGameExists(id){
     return fetch("/api/game/exists", {
-        method: "GET",
+        method: "POST",
         headers:{
             "Content-Type": "application/json"
         },
-        body:{
-            
-        }
+        body: JSON.stringify({
+            gameId: id
+        })
     });
 }
 

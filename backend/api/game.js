@@ -43,8 +43,9 @@ app.post("/join", (req, res) => {
 
 app.post("/exists", (req, res) => {
     try{
-        gameId = DTO.ifExistsDto.parse(req.body).gameId;
-        const data = gameSave.ifExists(gameId);
+        const searchedGame = DTO.ifExistsDto.parse(req.body);
+        console.log(searchedGame);
+        const data = gameSave.ifExists(searchedGame.gameId);
         return res.status(200).json(
             DTO.ifExistsResDto.parse(data)
         )
@@ -54,7 +55,7 @@ app.post("/exists", (req, res) => {
     }
 })
 
-app.post("/game/getPlayer", (req, res) => {
+app.post("/getPlayer", (req, res) => {
     try{
         const playerData = DTO.getPlayerDto.parse(req.body);
         const data = gameSave.getPlayer(playerData.gameId, playerData.playerId);
