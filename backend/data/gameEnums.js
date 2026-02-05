@@ -1,11 +1,27 @@
-export const states = {
+export{
+    states,
+    category,
+    reasons
+}
+
+const states = {
     LOBBY: "lobby",
     PLAYING: "playing",
     FINISHED: "finished",
     END: "end"
 }
 
-export const category = {
+const reasons = {
+    ALREADYSTARTED: "playing",
+    JOINABLE: "canjoin",
+    DOESNTEXIST: "noexist",
+    JOINSUCCESS: "joinsuc",
+    CREATIONSUCCESS: "cresucc",
+    CREATIONFAIL: "crefail",
+    GETSUCCESS: "getsucc"
+}
+
+const category = {
     ONE: "one",
     TWO: "two",
     THREE: "three",
@@ -19,9 +35,4 @@ export const category = {
     BIG_STRAIGHT: "big-str",
     YAHTZEE: "yahtzee",
     CHANCE: "chance"
-}
-
-export default{
-    states,
-    category
 }

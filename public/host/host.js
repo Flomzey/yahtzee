@@ -10,6 +10,7 @@ main();
 
 async function main(){
     gameId = await createGame();
+    document.getElementById("game-id").textContent = gameId;
     socket.emit("lobby:create", gameId);
 }
 
@@ -20,10 +21,10 @@ socket.on("player:joined", (playerName) => {
 });
 
 async function createGame() {
-    const res = await fetch("/api/game/create", {method:"POST"});
-    const data = await res.json();
-    document.getElementById("game-id").innerHTML = data.game.id;
-    return data.game.id;
+    const res = await fetch("/api/game/create", {method:"POST"})
+    data = await res.json();
+    if(!data.ok) throw new Error(data.reason);
+    return data.game.gameId;
 }
 
 async function addPlayer(name){

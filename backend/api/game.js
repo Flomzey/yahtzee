@@ -1,24 +1,20 @@
 import gameSave from "../data/gameSave.js";
 import express from "express";
+import * as DTO from "../data/dtos.js"
 import z from "zod";
 
 const app = express();
 
-const playerJoinDto = z.object({
-    gameId : z.string(6),
-    playerName : z.string()
-});
-
-const getPlayerDto = z.object({
-    gameId: z.string(6),
-    playerId : z.string(4)
-});
+export default app;
 
 app.post("/create", (req, res) => {
     try{
-        return res.status(200).json(gameSave.createGame());
+        const data = gameSave.createGame();
+        return res.status(200).json(
+            DTO.createGameResDto.parse(data)
+        );
     }catch(error){
-        console.log(`[Error] ${error}`);
+        console.log(`[Error] ${error.toString()}`);
         return res.status(500).json({
             error: "something went wrong"
         });
@@ -27,31 +23,44 @@ app.post("/create", (req, res) => {
 
 app.post("/join", (req, res) => {
     try{
-        const newPlayer = playerJoinDto.parse(req.body);
+        const newPlayer = DTO.playerJoinDto.parse(req.body);
         const data = gameSave.joinGame(newPlayer.gameId, newPlayer.playerName);
-        return res.status(200).json({
-            playerId: data.player.id
-        });
+        return res.status(200).json(
+            DTO.playerJoinResDto.parse(data)
+        );
     }catch(error){
-        console.log(`[Error] ${error.toString}`);
         if(error instanceof z.ZodError){
             return res.status(500).json({
                 error: "dto parse error"
             });
         }
+        console.log(`[Error] ${error.toString()}`);
         return res.status(500).json({
             error: "something went wrong"
         });
     }
 });
 
+app.post("/exists", (req, res) => {
+    try{
+        gameId = DTO.ifExistsDto.parse(req.body).gameId;
+        const data = gameSave.ifExists(gameId);
+        return res.status(200).json(
+            DTO.ifExistsResDto.parse(data)
+        )
+
+    }catch(error){
+        //TODO: exception handling
+    }
+})
+
 app.post("/game/getPlayer", (req, res) => {
     try{
-        const playerData = getPlayerDto.parse(req.body);
-        const player = gameSave.getPlayer(playerData.gameId, playerData.playerId);
+        const playerData = DTO.getPlayerDto.parse(req.body);
+        const data = gameSave.getPlayer(playerData.gameId, playerData.playerId);
 
         return res.status(200).json({
-            player: player
+            player: DTO.getPlayerResDto.parse(data)
         })
     }catch(error){
         if(error instanceof z.ZodError){
@@ -59,11 +68,10 @@ app.post("/game/getPlayer", (req, res) => {
                 error: "dto parse error"
             });
         }
+        console.log(`[Error] ${error.toString()}`);
         return res.status(500).json({
             error: "something went wrong"
         });
     }
 
 })
-
-export default app;

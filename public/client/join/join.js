@@ -28,6 +28,14 @@ async function main(){
     .then(() => window.location.href = "../game");
 }
 
+async functioin main(){
+    modal.style.display = "flex";
+    if(gameId === null){
+        gameId = await askCode();
+        res = await ifGameExists();
+    }
+}
+
 async function askCode(){
     return new Promise((resolve) => {
         idModal.style.display = "flex";
@@ -79,6 +87,18 @@ async function askName(){
         };
         nameButton.addEventListener("click", handler);
         nameInput.addEventListener("keydown", handler);
+    });
+}
+
+async function ifGameExists(){
+    return fetch("/api/game/exists", {
+        method: "GET",
+        headers:{
+            "Content-Type": "application/json"
+        },
+        body:{
+            
+        }
     });
 }
 
