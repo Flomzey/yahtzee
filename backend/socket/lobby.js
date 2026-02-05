@@ -8,9 +8,9 @@ export default function lobbyHandlers(io, socket){
 
     socket.on("lobby:join", (gameId, playerId) => {
         const hostSocketId = gameSave.getGameSocketId(gameId);
-        const joinedPlayer = gameSave.getPlayer(gameId, playerId);
+        const res = gameSave.getPlayer(gameId, playerId);
         socket.join(hostSocketId);
         console.log(`[socket] ${playerId} joined lobby: ${gameId}`)
-        io.to(hostSocketId).emit("player:joined", joinedPlayer.playerName);
+        io.to(hostSocketId).emit("player:joined", res.player.playerName);
     });
 }

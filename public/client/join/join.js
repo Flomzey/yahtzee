@@ -14,7 +14,6 @@ main();
 async function main(){
     modal.style.display = "flex";
     gameId = await checkGameId(params.get("gameId"));
-    console.log(gameId);
     playerName = await askName();
     modal.style.display = "none";
     console.log(`GameId:${gameId} PlayerName:${playerName}`);
@@ -80,30 +79,27 @@ async function askCode(){
     });
 }
 
-async function askName(){ //TODO: look at upper function
+async function askName(){
     return new Promise((resolve) => {
         nameModal.style.display = "flex";
 
-        const handler = (e) => {
+        const handlerClick = (e) => finish();
+        const handlerKey = (e) => {
+            if(e.key === "Enter") finish();
+        }
+
+        finish = () => {
+            if(nameInput.value === "") return;
             const input = nameInput.value;
-            if(e.type === "keydown"){
-                if(e.key === "Enter" && input !== ""){
-                    nameInput.value = "";
-                    nameModal.style.display = "none";
-                    nameInput.removeEventListener("keydown", handler);
-                    resolve(input);
-                }
-            }
-            if(e.type === "click" && input !== ""){
-                nameInput.value = "";
-                nameModal.style.display = "none";
-                nameInput.removeEventListener("click", handler);
-                resolve(input);
-            }
-            
-        };
-        nameButton.addEventListener("click", handler);
-        nameInput.addEventListener("keydown", handler);
+            nameInput.value = "";
+            nameModal.style.display = "none";
+            nameInput.removeEventListener("click", handlerClick);
+            nameInput.removeEventListener("keydown", handlerKey);
+            resolve(input);
+        }
+
+        nameButton.addEventListener("click", handlerClick);
+        nameInput.addEventListener("keydown", handlerKey);
     });
 }
 

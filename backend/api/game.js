@@ -44,7 +44,6 @@ app.post("/join", (req, res) => {
 app.post("/exists", (req, res) => {
     try{
         const searchedGame = DTO.ifExistsDto.parse(req.body);
-        console.log(searchedGame);
         const data = gameSave.ifExists(searchedGame.gameId);
         return res.status(200).json(
             DTO.ifExistsResDto.parse(data)
