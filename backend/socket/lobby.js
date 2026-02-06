@@ -2,15 +2,20 @@ import gameSave from "../data/gameSave.js";
 
 export default function lobbyHandlers(io, socket){
     socket.on("lobby:create", (gameId) => {
-        gameSave.setGameSocketId(gameId, socket.id);
+        socket.join(gameId);
         console.log(`[socket] A new lobby was created id: ${gameId} socketId: ${socket.id}`);
     });
 
     socket.on("lobby:join", (gameId, playerId) => {
-        const hostSocketId = gameSave.getGameSocketId(gameId);
-        const res = gameSave.getPlayer(gameId, playerId);
-        socket.join(hostSocketId);
+         //TODO: ID validation join => connect
+        const res = gameSave.getPlayer(gameId, playerId); // use session store, dont use the socketId
+        socket.join(gameId);
         console.log(`[socket] ${playerId} joined lobby: ${gameId}`)
-        io.to(hostSocketId).emit("player:joined", res.player.playerName);
+        io.to(gameId).emit("player:joined", res.player.playerName);
+    });
+
+    socket.on("lobby:disconnect", () => {
+
+        
     });
 }

@@ -8,8 +8,6 @@ export default{
     createGame,
     ifExists,
     joinGame,
-    setGameSocketId,
-    getGameSocketId,
     getPlayer
 }
 
@@ -21,8 +19,8 @@ export function createGame(){
     const gameId = nanoid(6);// missing logic for collision
     const game = {
         gameId: gameId,
-        socketId: null,
         players: new Map(),
+        playerNames: new Map(),
         state: states.LOBBY,
         roundsLeft: 13,
         lastAction: new Date() //later check if newdate.getTime() - olddate.getTime() > some value in ms
@@ -88,46 +86,40 @@ export function joinGame(gameId, playerName){
     }
 }
 
-/**
- * adds the socketId to the game belonging to the gameId
- * @param {*} gameId 
- * @param {*} socketId 
- * @returns true if game exists and SocketId was added, false if game doesnt exist and socketId couldn't be added
- */
-export function setGameSocketId(gameId, socketId){
-    if(!games.has(gameId)) return false; //TODO: return DTO
-    const game = games.get(gameId);
-    game.socketId = socketId;
-    return true;
-}
-
-//TODO: return DTOS
-export function getGameSocketId(gameId){
-    if(!games.has(gameId)) return undefined;
-    return games.get(gameId).socketId;
-}
-
-export function getPlayer(gameId, playerId){
+export function getPlayer(gameId, identifyer){
     if(!games.has(gameId)) return {
         ok: false,
         player: null,
         reason: reasons.DOESNTEXIST
     };
-    if(!games.get(gameId).players.has(playerId)) return{
-        ok:false,
-        player: null,
-        reason: reasons.DOESNTEXIST
-    };
-    return {
-        ok: true,
-        player: games.get(gameId).players.get(playerId),
-        reason: reasons.GETSUCCESS
-    };
+    if(games.get(gameId).playerNames.has(identifyer)) { 
+        playerId = games.get(gameId).playerNames.get(identifyer);
+        return{
+            ok: true,
+            player: games.get(gameId).players.get(playerId),
+            reason: reasons.GETSUCCESS
+        };
+    }
+    else{
+        if(games.get(gameId).players.has(identifyer)){
+            return {
+                ok: true,
+                player: games.get(gameId).players.get(identifyer),
+                reason: reasons.GETSUCCESS
+            };
+        }
+        else{
+            return {
+                ok: false,
+                player: null,
+                reason: reasons.DOESNTEXIST
+            };
+        }
+    }
 }
 
-function createNewPlayer(playerName, playerId){
+function createNewPlayer(playerName){
     return {
-        id: playerId,
         playerName: playerName,
         score: null,
         isTurn: false,

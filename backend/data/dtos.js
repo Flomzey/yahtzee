@@ -34,7 +34,7 @@ const playerJoinResDto = z.object({
 
 const getPlayerDto = z.object({
     gameId: z.string(6),
-    playerId : z.string(4)
+    identifyer: z.string()
 });
 
 const getPlayerResDto = z.object({

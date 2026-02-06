@@ -57,7 +57,7 @@ app.post("/exists", (req, res) => {
 app.post("/getPlayer", (req, res) => {
     try{
         const playerData = DTO.getPlayerDto.parse(req.body);
-        const data = gameSave.getPlayer(playerData.gameId, playerData.playerId);
+        const data = gameSave.getPlayer(playerData.gameId, playerData.identifyer);
 
         return res.status(200).json({
             player: DTO.getPlayerResDto.parse(data)

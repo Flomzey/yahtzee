@@ -18,10 +18,10 @@ async function main(){
     modal.style.display = "none";
     console.log(`GameId:${gameId} PlayerName:${playerName}`);
     sessionStorage.setItem("gameId", gameId);
-    joinGame()
-    .then(res => res.json())
-    .then(data => sessionStorage.setItem("playerId", data.playerId))
-    .then(() => window.location.href = "../game");
+    const res = await joinGame();
+    const data = await res.json();
+    sessionStorage.setItem("playerId", data.playerId)
+    window.location.href = "../game"
 }
 
 async function checkGameId(id){
