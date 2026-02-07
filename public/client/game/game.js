@@ -1,11 +1,13 @@
-const socket = io();
+const socket = io({
+    auth:{
+        gameId: sessionStorage.getItem("gameId"),
+        playerId: sessionStorage.getItem("playerId"),
+        role: "player"
+    }
+});
 
 main();
 
 function main(){
-    socket.emit(
-        "lobby:join", 
-        sessionStorage.getItem("gameId"),
-        sessionStorage.getItem("playerId")
-    );
+    socket.emit();
 }

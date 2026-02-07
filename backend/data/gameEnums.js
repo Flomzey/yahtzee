@@ -1,6 +1,6 @@
 export{
     states,
-    category,
+    categories,
     reasons
 }
 
@@ -12,16 +12,15 @@ const states = {
 }
 
 const reasons = {
-    ALREADYSTARTED: "playing",
+    ALREADYEXISTS: "alexist",
+    ALREADYSTARTED: "alrplay",
     JOINABLE: "canjoin",
     DOESNTEXIST: "noexist",
-    JOINSUCCESS: "joinsuc",
-    CREATIONSUCCESS: "cresucc",
     CREATIONFAIL: "crefail",
-    GETSUCCESS: "getsucc"
+    SUCCESS: "success"
 }
 
-const category = {
+const categories = {
     ONE: "one",
     TWO: "two",
     THREE: "three",

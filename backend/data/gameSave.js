@@ -1,6 +1,5 @@
 import { nanoid } from "nanoid";
-import { states, reasons } from "./gameEnums.js"
-import * as z from "zod";
+import { categories, reasons, states } from "./gameEnums.js";
 
 let games = new Map();
 
@@ -8,7 +7,8 @@ export default{
     createGame,
     ifExists,
     joinGame,
-    getPlayer
+    getPlayer,
+    getGame
 }
 
 /**
@@ -29,7 +29,7 @@ export function createGame(){
     return {
         ok: true,
         game: game,
-        reason: reasons.CREATIONSUCCESS
+        reason: reasons.SUCCESS
     }
 }
 
@@ -44,7 +44,7 @@ export function ifExists(gameId){
         reason: reasons.DOESNTEXIST
     };
     if(games.get(gameId).state !== states.LOBBY) return {
-        ok:false,
+        ok: true,
         reason: reasons.ALREADYSTARTED
     };
     return {
@@ -61,21 +61,33 @@ export function ifExists(gameId){
 export function joinGame(gameId, playerName){
     if(games.has(gameId)){
         const game = games.get(gameId);
+        if(game.playerNames.has(playerName)) return{
+            ok: false,
+            playerId: null,
+            reason: reasons.ALREADYEXISTS
+        };
         const playerId = nanoid(4); //missing logic for collision
 
         const player = createNewPlayer(playerName, playerId);
-        player.score = createNewScoreSheet();
+        const score = new Map();
+
+        Object.values(categories).forEach(entryTitle => {
+            score.set(entryTitle, createNewScoreEntry(entryTitle));
+        });
+
+        player.score = score;
 
         game.players.set(playerId, player);
+        game.playerNames.set(playerName, playerId);
         game.lastAction = new Date();
         games.set(gameId, game);
 
-        console.log(`[Api] ${playerId} wants to join the game ${gameId}`);
+        console.log(`[api:joingame] ${playerId} wants to join the game ${gameId}`);
 
         return {
             ok: true,
             playerId: playerId,
-            reason: reasons.JOINSUCCESS
+            reason: reasons.SUCCESS
         };
     }else{
         return {
@@ -83,6 +95,21 @@ export function joinGame(gameId, playerName){
             playerId: null,
             reason: reason.DOESNTEXIST
         };
+    }
+}
+
+export function getGame(gameId){
+    if(!games.has(gameId)) return{
+        ok: false,
+        game: null,
+        reason: reasons.DOESNTEXIST
+    };
+    const rawgame = games.get(gameId);
+    const resgame = removePlayerIds(rawgame);
+    return{
+        ok: true,
+        game: resgame,
+        reason: reasons.SUCCESS
     }
 }
 
@@ -97,7 +124,7 @@ export function getPlayer(gameId, identifyer){
         return{
             ok: true,
             player: games.get(gameId).players.get(playerId),
-            reason: reasons.GETSUCCESS
+            reason: reasons.SUCCESS
         };
     }
     else{
@@ -105,7 +132,7 @@ export function getPlayer(gameId, identifyer){
             return {
                 ok: true,
                 player: games.get(gameId).players.get(identifyer),
-                reason: reasons.GETSUCCESS
+                reason: reasons.SUCCESS
             };
         }
         else{
@@ -118,31 +145,33 @@ export function getPlayer(gameId, identifyer){
     }
 }
 
+function removePlayerIds(game){
+    const ret = new Array();
+
+    game.players.forEach(player => {
+        ret.push(player);
+    });
+
+    game.players = ret;
+
+    return game;
+}
+
 function createNewPlayer(playerName){
     return {
         playerName: playerName,
         score: null,
+        socketId: null,
         isTurn: false,
         isReady: false,
         rollsLeft: 0
     };
 }
 
-function createNewScoreSheet(){
-    return {
-        one: null,
-        two: null,
-        three: null,
-        four: null,
-        three: null,
-        five: null,
-        six: null,
-        threeOak: null,
-        fourOak: null,
-        fullH: null,
-        smallStr: null,
-        bigStr: null,
-        yahtzee: null,
-        chance: null
-    };
+function createNewScoreEntry(entryTitle){
+    return{
+        entryTitle: entryTitle,
+        points: null,
+        dice: null
+    }
 }

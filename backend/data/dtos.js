@@ -1,4 +1,5 @@
 import * as z from "zod";
+import {reasons, states, categories} from "./gameEnums.js"
 
 export {
     createGameResDto,
@@ -7,18 +8,41 @@ export {
     getPlayerResDto,
     playerJoinResDto,
     ifExistsDto,
-    ifExistsResDto
+    ifExistsResDto,
+    getGameResDto
 }
 
-const gameOnCreate = z.object({
+const scoreEntry = z.object({
+    entryTitle: z.enum(Object.values(categories)),
+    points: z.int().nullable(),
+    dice: z.array().nullable()
+});
+
+const player = z.object({
+    playerName: z.string(),
+    score: z.map(z.string(), scoreEntry),
+    isTurn: z.boolean(),
+    isReady: z.boolean(),
+    rollsLeft: z.int()
+});
+
+const gameOnCreation = z.object({
     gameId: z.string(6),
-    state: z.string(),
+    state: z.enum(Object.values(states)),
+    roundsLeft: z.int()
+});
+
+const game = z.object({
+    gameId: z.string(6),
+    players: z.array(player),
+    state: z.enum(Object.values(states)),
+    roundsLeft: z.int()
 });
 
 const createGameResDto = z.object({
     ok: z.boolean(),
-    game: gameOnCreate,
-    reason: z.string(7)
+    game: gameOnCreation,
+    reason: z.enum(Object.values(reasons))
 });
 
 const playerJoinDto = z.object({
@@ -28,8 +52,8 @@ const playerJoinDto = z.object({
 
 const playerJoinResDto = z.object({
     ok: z.boolean(),
-    playerId: z.string(4),
-    reason: z.string(7)
+    playerId: z.string(4).nullable(),
+    reason: z.enum(Object.values(reasons))
 });
 
 const getPlayerDto = z.object({
@@ -39,8 +63,8 @@ const getPlayerDto = z.object({
 
 const getPlayerResDto = z.object({
     ok: z.boolean(),
-    player: z.object(),
-    reason: z.string(7)
+    player: player.nullable(),
+    reason: z.enum(Object.values(reasons))
 })
 
 const ifExistsDto = z.object({
@@ -49,5 +73,11 @@ const ifExistsDto = z.object({
 
 const ifExistsResDto = z.object({
     ok: z.boolean(),
-    reason: z.string(7)
+    reason: z.enum(Object.values(reasons))
+});
+
+const getGameResDto = z.object({
+    ok: z.boolean(),
+    game: game.nullable(),
+    reason: z.enum(Object.values(reasons))
 });

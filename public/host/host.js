@@ -2,19 +2,26 @@ const modal = document.getElementById("modal");
 const input = document.getElementById("name-input");
 const notEnough = document.getElementById("not-enough");
 const okButton = document.getElementById("button-ok");
-const socket = io();
 let players = new Array;
 let gameId = "";
 
 main();
 
+const socket = io({
+    auth: {
+        gameId: gameId,
+        role: "host"
+    }
+});
+
 async function main(){
     gameId = await createGame();
+    sessionStorage.setItem("gameId", gameId);
     document.getElementById("game-id").textContent = gameId;
     socket.emit("lobby:create", gameId);
 }
 
-socket.on("player:joined", (playerName) => {
+socket.on("reconnect:sync", (playerName) => {
     console.log(playerName + " joined")
     players.push(playerName);
     updateList();

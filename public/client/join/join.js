@@ -28,7 +28,7 @@ async function checkGameId(id){
     if(id !== null){
         res = await ifGameExists(id);
         data = await res.json();
-        if(data.ok){
+        if(data.ok && data.status === "lobby"){
             return id;
         }else{
             return await wrongGameId();

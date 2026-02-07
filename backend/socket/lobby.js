@@ -1,6 +1,6 @@
 import gameSave from "../data/gameSave.js";
 
-export default function lobbyHandlers(io, socket){
+export default function lobbyHandlers(socket, io){
     socket.on("lobby:create", (gameId) => {
         socket.join(gameId);
         console.log(`[socket] A new lobby was created id: ${gameId} socketId: ${socket.id}`);
@@ -15,7 +15,6 @@ export default function lobbyHandlers(io, socket){
     });
 
     socket.on("lobby:disconnect", () => {
-
         
     });
 }
