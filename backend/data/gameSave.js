@@ -8,7 +8,8 @@ export default{
     ifExists,
     joinGame,
     getPlayer,
-    getGame
+    getGame,
+    setGameSocketId
 }
 
 /**
@@ -19,6 +20,7 @@ export function createGame(){
     const gameId = nanoid(6);// missing logic for collision
     const game = {
         gameId: gameId,
+        socketId: null,
         players: new Map(),
         playerNames: new Map(),
         state: states.LOBBY,
@@ -113,13 +115,30 @@ export function getGame(gameId){
     }
 }
 
+/**
+ * do not use this function in the API, it does not use dtos as pararmeters, backend use only
+ * @param {*} gameId id of the game to set the socket id
+ * @param {*} newId new socket id
+ * @returns true if game exists and socketid was set false if otherwise
+ */
+export function setGameSocketId(gameId, newId){
+    if(!games.has(gameId)){
+        return false;
+    }
+    const game = games.get(gameId);
+    game.socketId = newId;
+    games.set(gameId, game);
+    return true;
+}
+
 export function getPlayer(gameId, identifyer){
     if(!games.has(gameId)) return {
         ok: false,
         player: null,
         reason: reasons.DOESNTEXIST
     };
-    if(games.get(gameId).playerNames.has(identifyer)) { 
+    const playerNames = games.get(gameId).playerNames;
+    if(playerNames.has(identifyer)) { 
         playerId = games.get(gameId).playerNames.get(identifyer);
         return{
             ok: true,
@@ -127,34 +146,33 @@ export function getPlayer(gameId, identifyer){
             reason: reasons.SUCCESS
         };
     }
-    else{
-        if(games.get(gameId).players.has(identifyer)){
-            return {
-                ok: true,
-                player: games.get(gameId).players.get(identifyer),
-                reason: reasons.SUCCESS
-            };
-        }
-        else{
-            return {
-                ok: false,
-                player: null,
-                reason: reasons.DOESNTEXIST
-            };
-        }
+    console.log(games)
+    console.log(games.get(gameId).players instanceof Map) //temp 
+    if(games.get(gameId).players.has(identifyer)){
+        return {
+            ok: true,
+            player: games.get(gameId).players.get(identifyer),
+            reason: reasons.SUCCESS
+        };
     }
+    return {
+        ok: false,
+        player: null,
+        reason: reasons.DOESNTEXIST
+    };
 }
 
 function removePlayerIds(game){
-    const ret = new Array();
+    const ret = { game };
+    const playerArrayWithoutIds = new Array();
 
-    game.players.forEach(player => {
-        ret.push(player);
+    ret.game.players.forEach(player => {
+        playerArrayWithoutIds.push(player);
     });
 
-    game.players = ret;
+    ret.game.players = playerArrayWithoutIds;
 
-    return game;
+    return ret.game;
 }
 
 function createNewPlayer(playerName){

@@ -9,5 +9,5 @@ const socket = io({
 main();
 
 function main(){
-    socket.emit();
+    
 }

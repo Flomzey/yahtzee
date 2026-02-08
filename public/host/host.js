@@ -3,22 +3,24 @@ const input = document.getElementById("name-input");
 const notEnough = document.getElementById("not-enough");
 const okButton = document.getElementById("button-ok");
 let players = new Array;
-let gameId = "";
-
-main();
+let gameId = null;
 
 const socket = io({
-    auth: {
-        gameId: gameId,
-        role: "host"
-    }
+    autoconnect: false //stops the socket from connection now we need to wait for the creation of the game
 });
+
+main();
 
 async function main(){
     gameId = await createGame();
     sessionStorage.setItem("gameId", gameId);
     document.getElementById("game-id").textContent = gameId;
-    socket.emit("lobby:create", gameId);
+    socket.auth = {
+        gameId: gameId,
+        role: "host"
+    }
+    console.log(socket.auth.gameId)
+    socket.connect();
 }
 
 socket.on("reconnect:sync", (playerName) => {

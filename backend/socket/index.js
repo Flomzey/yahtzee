@@ -23,12 +23,12 @@ function onConnect(socket){
         return;
     }
 
-    const gameExistres = gameSave.ifExists(gameId);
-    const parsed = dtos.ifExistsResDto.safeParse(gameExistres);
+    const gameExistRes = gameSave.ifExists(gameId);
+    const parsed = dtos.ifExistsResDto.safeParse(gameExistRes);
 
     if(!parsed.success){
         socket.disconnect();
-        console.log("[socket:onconnect] dto parse error:")
+        console.log("[socket:onconnect] dto parse error:");
         console.log(parsed.error);
         return;
     }
@@ -43,7 +43,7 @@ function onConnect(socket){
     socket.join(gameId);
 
     if(role === "host"){
-        //host method
+        handleHostConnection(socket);
     }
 
     if(role === "player"){
@@ -57,6 +57,33 @@ function onDisconnect(socket, reason){
 
 }
 
+function handleHostConnection(socket){
+    const {gameId, role} = socket.handshake.auth;
+
+    const gameRes = gameSave.getGame(gameId);
+    const gameParse = dtos.getGameResDto.safeParse(gameRes);
+    
+    if(!gameParse.success){
+        socket.disconnect();
+        console.log(`[socket:onconnect:host] host ${gameId} dto parse error`);
+        console.log(gameParse.error)
+        return;
+    }
+
+    const game = gameParse.data;
+    const isReconnect = !!game.socketId;
+
+    gameSave.setGameSocketId(gameId, socket.id);
+
+    if(isReconnect){
+        socket.emit("reconnect:sync", gameSave.getGame()); //TODO: use dto parse
+        console.log(`[socket:onconnect:host] host ${gameId} has reconnected`);
+        return;
+    }
+    socket.emit("reconnect:sync", gameSave.getGame());
+    console.log(`[socket:onconnect:host] host ${gameId} has connected`);
+}
+
 function handlePlayerConnection(socket){
     
     const{gameId, playerId, role} = socket.handshake.auth;
@@ -65,7 +92,7 @@ function handlePlayerConnection(socket){
 
     if(!parsed.success){
         socket.disconnect();
-        console.log("[socket:onconnect] dto parse error:")
+        console.log("[socket:onconnect:player] dto parse error:")
         console.log(parsed.error);
         return;
     }
@@ -82,12 +109,10 @@ function handlePlayerConnection(socket){
     socket.data.gameId = gameId;
     socket.data.playerId = playerId;
 
-    socket.join(gameId);
-
     if(isReconnect){
         socket.to(gameId).emit("reconnect:sync", player);
-        socket.emit("reconnect:sync", gameSave.getGame());
-        console.log(`[socket:onconnect] player ${playerId} reconnected to ${gameId}`);
+        socket.emit("reconnect:sync", gameSave.getGame()); //TODO: use DTO parse
+        console.log(`[socket:onconnect:player] player ${playerId} reconnected to ${gameId}`);
         return;
     }
 
