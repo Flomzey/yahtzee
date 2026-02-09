@@ -92,7 +92,7 @@ function handlePlayerConnection(socket){
 
     if(!parsed.success){
         socket.disconnect();
-        console.log("[socket:onconnect:player] dto parse error:")
+        console.log("[socket:onconnect:player] dto parse error:");
         console.log(parsed.error);
         return;
     }
@@ -100,6 +100,7 @@ function handlePlayerConnection(socket){
     const player = parsed.data;
 
     if(!player.ok){
+        console.log("[socket:onconnect:player] player not ok")
         socket.disconnect();
         return;
     }
@@ -117,4 +118,5 @@ function handlePlayerConnection(socket){
     }
 
     socket.to(gameId).emit("connect:sync", player);
+    console.log(`[socket:onconnect:player] player ${playerId} connected to ${gameId}`);
 }

@@ -1,5 +1,7 @@
 import { nanoid } from "nanoid";
 import { categories, reasons, states } from "./gameEnums.js";
+import { gamesGo, gameGo, playerGo, scoreEntryGo } from "./gameObjects.js";
+import { gameDto } from "./dtos.js"
 
 let games = new Map();
 
@@ -8,6 +10,7 @@ export default{
     ifExists,
     joinGame,
     getPlayer,
+    setPlayerSocketId,
     getGame,
     setGameSocketId
 }
@@ -115,6 +118,10 @@ export function getGame(gameId){
     }
 }
 
+export function setPlayerSocketId(player){
+    
+}
+
 /**
  * do not use this function in the API, it does not use dtos as pararmeters, backend use only
  * @param {*} gameId id of the game to set the socket id
@@ -163,16 +170,22 @@ export function getPlayer(gameId, identifyer){
 }
 
 function removePlayerIds(game){
-    const ret = { game };
+    const parsed = gameDto.safeParse(game);
+
+    if(!parsed.success){
+        return null;
+    }
+
+    gameCopy = parsed.data;
     const playerArrayWithoutIds = new Array();
 
-    ret.game.players.forEach(player => {
+    gameCopy.players.forEach(player => {
         playerArrayWithoutIds.push(player);
     });
 
-    ret.game.players = playerArrayWithoutIds;
+    gameCopy.players = playerArrayWithoutIds;
 
-    return ret.game;
+    return gameCopy;
 }
 
 function createNewPlayer(playerName){

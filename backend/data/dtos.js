@@ -9,7 +9,8 @@ export {
     playerJoinResDto,
     ifExistsDto,
     ifExistsResDto,
-    getGameResDto
+    getGameResDto,
+    gameDto
 }
 
 const scoreEntry = z.object({
@@ -32,7 +33,7 @@ const gameOnCreation = z.object({
     roundsLeft: z.int()
 });
 
-const game = z.object({
+const gameDto = z.object({
     gameId: z.string(6),
     players: z.array(player),
     state: z.enum(Object.values(states)),
@@ -78,6 +79,6 @@ const ifExistsResDto = z.object({
 
 const getGameResDto = z.object({
     ok: z.boolean(),
-    game: game.nullable(),
+    game: gameDto.nullable(),
     reason: z.enum(Object.values(reasons))
 });
