@@ -25,7 +25,6 @@ async function main(){
 }
 
 socket.on("connect:sync", player => {
-    console.log(player)
     players.push(player.playerName);
     updateList();
 });
