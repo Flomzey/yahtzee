@@ -52,7 +52,8 @@ function onConnect(socket){
 }
 
 function onDisconnect(socket, reason){
-    console.log("someone disconnected")
+    const{ gameId, role } = socket.handshake.auth;
+    console.log(`[socket:ondisconnect] a ${role} disconnected from ${gameId}`)
 }
 
 function handleHostConnection(socket){
