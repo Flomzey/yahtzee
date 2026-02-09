@@ -70,7 +70,6 @@ function handleHostConnection(socket){
 
     const game = gameParse.data;
     const isReconnect = !!game.socketId;
-
     gameSave.setGameSocketId(gameId, socket.id);
 
     if(isReconnect){
