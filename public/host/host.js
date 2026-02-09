@@ -5,27 +5,28 @@ const okButton = document.getElementById("button-ok");
 let players = new Array;
 let gameId = null;
 
-const socket = io({
-    autoconnect: false //stops the socket from connection now we need to wait for the creation of the game
+const socket = io("ws://127.0.0.1:3000", {transports: ["websocket"]}, {
+    autoconnect: false, //stops the socket from connection now we need to wait for the creation of the game
 });
 
 main();
 
 async function main(){
-    gameId = await createGame();
-    sessionStorage.setItem("gameId", gameId);
-    document.getElementById("game-id").textContent = gameId;
+    if(sessionStorage.getItem("gameId") === null){
+        gameId = await createGame();
+        sessionStorage.setItem("gameId", gameId);
+    }
+    document.getElementById("game-id").textContent = sessionStorage.getItem("gameId");
     socket.auth = {
-        gameId: gameId,
+        gameId: sessionStorage.getItem("gameId"),
         role: "host"
     }
-    console.log(socket.auth.gameId)
     socket.connect();
 }
 
-socket.on("reconnect:sync", (playerName) => {
-    console.log(playerName + " joined")
-    players.push(playerName);
+socket.on("connect:sync", player => {
+    console.log(player)
+    players.push(player.playerName);
     updateList();
 });
 

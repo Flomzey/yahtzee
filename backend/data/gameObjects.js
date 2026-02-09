@@ -11,12 +11,12 @@ export {
 const scoreEntry = z.object({
     entryTitle: z.enum(Object.values(categories)),
     points: z.int().nullable(),
-    dice: z.array(z.int).nullable()
+    dice: z.array(z.int()).nullable()
 });
 
 const player = z.object({
     playerName: z.string(),
-    score: scoreEntry.nullable(),
+    score: z.map(z.enum(Object.values(categories)), scoreEntry),
     socketId: z.string().nullable(),
     isTurn: z.boolean(),
     isReady: z.boolean(),

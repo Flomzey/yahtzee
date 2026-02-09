@@ -12,7 +12,8 @@ export default{
     getPlayer,
     setPlayerSocketId,
     getGame,
-    setGameSocketId
+    setGameSocketId,
+    getPublicGame
 }
 
 /**
@@ -109,6 +110,19 @@ export function getGame(gameId){
         game: null,
         reason: reasons.DOESNTEXIST
     };
+    return{
+        ok: true,
+        game: games.get(gameId),
+        reason: reasons.SUCCESS
+    }
+}
+
+export function getPublicGame(gameId){
+    if(!games.has(gameId)) return{
+        ok: false,
+        game: null,
+        reason: reasons.DOESNTEXIST
+    };
     const rawgame = games.get(gameId);
     const resgame = removePlayerIds(rawgame);
     return{
@@ -118,8 +132,11 @@ export function getGame(gameId){
     }
 }
 
-export function setPlayerSocketId(player){
-    
+export function setPlayerSocketId(gameId, playerId, newId){
+    if(!games.has(gameId)) return false;
+    if(!games.get(gameId).players.has(playerId)) return false;
+    games.get(gameId).players.get(playerId).socketId = newId;
+    return true;
 }
 
 /**
@@ -153,8 +170,6 @@ export function getPlayer(gameId, identifyer){
             reason: reasons.SUCCESS
         };
     }
-    console.log(games)
-    console.log(games.get(gameId).players instanceof Map) //temp 
     if(games.get(gameId).players.has(identifyer)){
         return {
             ok: true,
@@ -170,13 +185,13 @@ export function getPlayer(gameId, identifyer){
 }
 
 function removePlayerIds(game){
-    const parsed = gameDto.safeParse(game);
+    const parsed = gameGo.safeParse(game);
 
     if(!parsed.success){
         return null;
     }
 
-    gameCopy = parsed.data;
+    const gameCopy = parsed.data;
     const playerArrayWithoutIds = new Array();
 
     gameCopy.players.forEach(player => {

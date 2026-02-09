@@ -1,7 +1,7 @@
 import lobbyHandlers from "./lobby.js";
 import * as dtos  from "../data/dtos.js";
 import gameSave from "../data/gameSave.js";
-
+import { gamesGo, gameGo, playerGo, scoreEntryGo } from "../data/gameObjects.js";
 
 export default function setupSockets(io){
     io.on("connection", (socket) => {
@@ -49,19 +49,17 @@ function onConnect(socket){
     if(role === "player"){
         handlePlayerConnection(socket);
     }
-
-    socket.disconnect();
 }
 
 function onDisconnect(socket, reason){
-
+    console.log("someone disconnected")
 }
 
 function handleHostConnection(socket){
     const {gameId, role} = socket.handshake.auth;
 
     const gameRes = gameSave.getGame(gameId);
-    const gameParse = dtos.getGameResDto.safeParse(gameRes);
+    const gameParse = gameGo.safeParse(gameRes.game);
     
     if(!gameParse.success){
         socket.disconnect();
@@ -76,19 +74,18 @@ function handleHostConnection(socket){
     gameSave.setGameSocketId(gameId, socket.id);
 
     if(isReconnect){
-        socket.emit("reconnect:sync", gameSave.getGame()); //TODO: use dto parse
+        socket.emit("reconnect:sync", game); //TODO: use dto parse
         console.log(`[socket:onconnect:host] host ${gameId} has reconnected`);
         return;
     }
-    socket.emit("reconnect:sync", gameSave.getGame());
+    socket.emit("reconnect:sync", game);
     console.log(`[socket:onconnect:host] host ${gameId} has connected`);
 }
 
 function handlePlayerConnection(socket){
-    
     const{gameId, playerId, role} = socket.handshake.auth;
     const playerres = gameSave.getPlayer(gameId, playerId);
-    const parsed = dtos.getPlayerResDto.safeParse(playerres);
+    const parsed = playerGo.safeParse(playerres.player);
 
     if(!parsed.success){
         socket.disconnect();
@@ -98,21 +95,18 @@ function handlePlayerConnection(socket){
     }
 
     const player = parsed.data;
-
-    if(!player.ok){
-        console.log("[socket:onconnect:player] player not ok")
-        socket.disconnect();
-        return;
-    }
     
     const isReconnect = !!player.socketId;
-    player.socketId = socket.id;
+    const idWasAdded = gameSave.setPlayerSocketId(gameId, playerId, socket.id);
+    if(!idWasAdded){
+        console.log("[socket:onconnect:player] couldnt set new socketid of player");
+    }
     socket.data.gameId = gameId;
     socket.data.playerId = playerId;
 
     if(isReconnect){
         socket.to(gameId).emit("reconnect:sync", player);
-        socket.emit("reconnect:sync", gameSave.getGame()); //TODO: use DTO parse
+        socket.emit("reconnect:sync", gameSave.getPublicGame(gameId)); //TODO: use DTO parse
         console.log(`[socket:onconnect:player] player ${playerId} reconnected to ${gameId}`);
         return;
     }
