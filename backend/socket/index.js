@@ -84,9 +84,7 @@ function handleHostConnection(socket){
 
 function handlePlayerConnection(socket){
     const{gameId, playerId, role} = socket.handshake.auth;
-    console.log(gameId, playerId)
     const playerres = gameSave.getPlayer(gameId, playerId);
-    console.log(playerres); //temp
     const parsed = playerGo.safeParse(playerres.player);
 
     if(!parsed.success){
@@ -114,5 +112,6 @@ function handlePlayerConnection(socket){
     }
 
     socket.to(gameId).emit("connect:sync", player);
+    socket.emit("connect:sync", player);
     console.log(`[socket:onconnect:player] player ${playerId} connected to ${gameId}`);
 }

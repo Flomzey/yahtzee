@@ -1,6 +1,9 @@
-const socket = io("ws://127.0.0.1:3000", {transports: ["websocket"]}, {
-    autoconnect: false, //stops the socket from connection now we need to wait for the creation of the game
-});
+const socket = io("ws://127.0.0.1:3000", 
+    {
+        transports: ["websocket"],
+        autoconnect: false
+    }
+);
 
 main();
 
@@ -13,6 +16,10 @@ function main(){
     socket.connect();
 }
 
-socket.on("reconnect:sync", player => {
-    console.log(player)
+socket.on("connect:sync", player => {
+    console.log(player.score)
+});
+
+socket.on("reconnect:sync", publicGame => {
+    console.log(publicGame)
 });
