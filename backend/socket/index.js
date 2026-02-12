@@ -104,7 +104,7 @@ function handlePlayerConnection(socket){
     socket.data.gameId = gameId;
     socket.data.playerId = playerId;
 
-    player.score = [...player.score];
+    player.score = [...player.score.values()];
 
     if(isReconnect){
         socket.to(gameId).emit("reconnect:sync", player);

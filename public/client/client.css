@@ -54,9 +54,17 @@ body{
 /*dice-box*/
 .dice-box{
     display: flex;
-    height: 25%;
+    height: 22%;
     width: 100%;
     background-color: #8C1007;
+}
+
+/*middle-box*/
+.middle-box{
+    display: flex;
+    height: 55%;
+    width: 100%;
+    background-color: #E2DDB4;
 }
 
 /*Buttons*/
