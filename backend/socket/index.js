@@ -104,6 +104,8 @@ function handlePlayerConnection(socket){
     socket.data.gameId = gameId;
     socket.data.playerId = playerId;
 
+    player.score = [...player.score];
+
     if(isReconnect){
         socket.to(gameId).emit("reconnect:sync", player);
         socket.emit("reconnect:sync", gameSave.getPublicGame(gameId)); //TODO: use DTO parse

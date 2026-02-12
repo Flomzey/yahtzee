@@ -17,7 +17,7 @@ function main(){
 }
 
 socket.on("connect:sync", player => {
-    console.log(player.score)
+    console.log(player);
 });
 
 socket.on("reconnect:sync", publicGame => {
