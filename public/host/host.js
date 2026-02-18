@@ -33,6 +33,12 @@ socket.on("connect:sync", player => {
     updateList();
 });
 
+socket.on("reconnect:sync", player => {
+    if(players.find(arrayPlayer => arrayPlayer === player.playerName)) return;
+    players.push(player.playerName);
+    updateList();
+});
+
 async function createGame() {
     const res = await fetch("/api/game/create", {method:"POST"})
     data = await res.json();

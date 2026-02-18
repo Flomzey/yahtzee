@@ -67,6 +67,13 @@ body{
     background-color: #E2DDB4;
 }
 
+.score-item{
+    display: flex;
+    height: 12%;
+    width: 50%;
+    background-color: black;
+}
+
 /*Buttons*/
 #button-square{
     width: 80%;
