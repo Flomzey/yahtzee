@@ -27,11 +27,14 @@ const categories = {
     FOUR: "four",
     FIVE: "five",
     SIX: "six",
+    NBR_SUM: "nbr-sum",
+    BONUS: "bonus",
     THREE_OF_A_KIND: "three-oak",
     FOUR_OF_A_KIND: "four-oak",
     FULL_HOUSE: "full-h",
     SMALL_STRAIGHT: "small-str",
     BIG_STRAIGHT: "big-str",
     YAHTZEE: "yahtzee",
-    CHANCE: "chance"
+    CHANCE: "chance",
+    COMBINATION_SUM: "comb-sum",
 }

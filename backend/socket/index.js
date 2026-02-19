@@ -95,6 +95,8 @@ function handlePlayerConnection(socket){
     }
 
     const player = parsed.data;
+
+    console.log(player)
     
     const isReconnect = !!player.socketId;
     const idWasAdded = gameSave.setPlayerSocketId(gameId, playerId, socket.id);
@@ -103,6 +105,8 @@ function handlePlayerConnection(socket){
     }
     socket.data.gameId = gameId;
     socket.data.playerId = playerId;
+
+    const publicGame = gameSave.getPublicGame(gameId);
 
     player.score = [...player.score.values()];
 

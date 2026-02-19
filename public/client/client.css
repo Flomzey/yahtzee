@@ -60,18 +60,19 @@ body{
 }
 
 /*middle-box*/
-.middle-box{
+#middle-box{
     display: flex;
-    height: 55%;
+    flex-wrap: wrap;
+    flex-direction: column;
+    height: 44%;
     width: 100%;
     background-color: #E2DDB4;
 }
 
 .score-item{
     display: flex;
-    height: 12%;
+    height: 12.5%;
     width: 50%;
-    background-color: black;
 }
 
 /*Buttons*/

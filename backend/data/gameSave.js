@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import { categories, reasons, states } from "./gameEnums.js";
-import { gamesGo, gameGo, playerGo, scoreEntryGo } from "./gameObjects.js";
+import { gameGo, publicGameGo } from "./gameObjects.js";
 import { gameDto } from "./dtos.js"
 
 let games = new Map();
@@ -123,11 +123,12 @@ export function getPublicGame(gameId){
         game: null,
         reason: reasons.DOESNTEXIST
     };
-    const rawgame = games.get(gameId);
-    const resgame = removePlayerIds(rawgame);
+    const rawGame = games.get(gameId);
+    const noPlayerIdGame = removeIds(rawGame);
+    const resGame = extractMaps(noPlayerIdGame);
     return{
         ok: true,
-        game: resgame,
+        game: resGame,
         reason: reasons.SUCCESS
     }
 }
@@ -184,8 +185,8 @@ export function getPlayer(gameId, identifyer){
     };
 }
 
-function removePlayerIds(game){
-    const parsed = gameGo.safeParse(game);
+function removeIds(game){
+    const parsed = publicGameGo.safeParse(game);
 
     if(!parsed.success){
         return null;
@@ -201,6 +202,11 @@ function removePlayerIds(game){
     gameCopy.players = playerArrayWithoutIds;
 
     return gameCopy;
+}
+
+function extractMaps(gameWithoutPlayerIds){
+    gameWithoutPlayerIds.players = [...gameWithoutPlayerIds.players.values()];
+    return gameWithoutPlayerIds;
 }
 
 function createNewPlayer(playerName){
