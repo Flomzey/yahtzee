@@ -22,7 +22,8 @@ const player = z.object({
     socketId: z.string().nullable(),
     isTurn: z.boolean(),
     isReady: z.boolean(),
-    rollsLeft: z.int()
+    rollsLeft: z.int(),
+    totalPoints: z.int()
 });
 
 const publicPlayer = z.object({
@@ -30,7 +31,8 @@ const publicPlayer = z.object({
     score: z.map(z.enum(Object.values(categories)), scoreEntry),
     isTurn: z.boolean(),
     isReady: z.boolean(),
-    rollsLeft: z.int()
+    rollsLeft: z.int(),
+    totalPoints: z.int()
 });
 
 const game = z.object({

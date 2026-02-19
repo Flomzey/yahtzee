@@ -1,9 +1,10 @@
-import { nanoid } from "nanoid";
+import { nanoid, customAlphabet } from "nanoid";
 import { categories, reasons, states } from "./gameEnums.js";
 import { gameGo, publicGameGo } from "./gameObjects.js";
 import { gameDto } from "./dtos.js"
 
 let games = new Map();
+const alphabet = "0123456789";
 
 export default{
     createGame,
@@ -21,7 +22,8 @@ export default{
  * @returns object {ok: boolean, game: gameObject}
  */
 export function createGame(){
-    const gameId = nanoid(6);// missing logic for collision
+    const gameIdCreator = customAlphabet(alphabet, 6)
+    const gameId = gameIdCreator();// missing logic for collision
     const game = {
         gameId: gameId,
         socketId: null,
@@ -216,7 +218,8 @@ function createNewPlayer(playerName){
         socketId: null,
         isTurn: false,
         isReady: false,
-        rollsLeft: 0
+        rollsLeft: 0,
+        totalPoints: 0
     };
 }
 
