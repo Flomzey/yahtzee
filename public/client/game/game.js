@@ -1,6 +1,6 @@
 const middleBox = document.getElementById("middle-box");
 
-const players = new Array();
+let players;
 let localPlayer;
 
 const socket = io("ws://127.0.0.1:3000", 
@@ -26,9 +26,14 @@ socket.on("connect:sync", player => {
     buildScoresheet();
 });
 
-socket.on("reconnect:sync", publicGame => {
-    console.log(publicGame);
-
+socket.on("reconnect:sync", res => {
+    localPlayer = res.player;
+    buildScoresheet();
+    const game = res.publicGame.game;
+    players = game.players;
+    players.forEach(p => {
+        
+    });
 });
 
 function buildScoresheet(){

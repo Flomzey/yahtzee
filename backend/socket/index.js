@@ -95,8 +95,6 @@ function handlePlayerConnection(socket){
     }
 
     const player = parsed.data;
-
-    console.log(player)
     
     const isReconnect = !!player.socketId;
     const idWasAdded = gameSave.setPlayerSocketId(gameId, playerId, socket.id);
@@ -112,7 +110,10 @@ function handlePlayerConnection(socket){
 
     if(isReconnect){
         socket.to(gameId).emit("reconnect:sync", player);
-        socket.emit("reconnect:sync", gameSave.getPublicGame(gameId)); //TODO: use DTO parse
+        socket.emit("reconnect:sync", {
+            player: player,
+            publicGame: publicGame
+        }); //TODO: use DTO parse
         console.log(`[socket:onconnect:player] player ${playerId} reconnected to ${gameId}`);
         return;
     }
