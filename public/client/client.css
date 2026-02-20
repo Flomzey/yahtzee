@@ -77,17 +77,45 @@ body{
     height: 12.5%;
     width: 50%;
     box-sizing: border-box;
-    border: 0.5vh;
+    border-top-width: 0;
+    border-bottom-width: 0;
+    border-right-width: 0;
+    border-left-width: 0;
     font-size: 5vh;
 }
 
-#score-item-clickable{
-    background-color: #e2ddb4;
-    border-left: outset #f3edc1;
+.score-item.selected{
+    background-color: #b0ac8d;
+    border: #C3110C 0.5vh;
 }
 
-#score-item-noclickable{
+.score-item.clickable{
+    background-color: #e2ddb4;
+    border-color: #ede8be;
+    border-style: outset;
+}
+
+.score-item.noclickable{
     background-color: #b0ac8d;
+    border: none;
+    /*border-color: #ede8be;
+    border-style: inset;*/
+}
+
+.score-item.top{
+    border-top-width: 0.5vh;
+}
+
+.score-item.right{
+    border-right-width: 0.5vh;
+}
+
+.score-item.left{
+    border-left-width: 0.5vh;
+}
+
+.score-item.bot{
+    border-bottom-width: 0.5vh;
 }
 
 /*Score Box*/
