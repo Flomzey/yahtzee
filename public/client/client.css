@@ -28,6 +28,8 @@ body{
     height: 11%;
     width: 100%;
     background-color: #E2DDB4;
+    border: outset #f3edc1 0.5vh;
+    box-sizing: border-box;
 }
 
 .top-title-box{
@@ -80,13 +82,12 @@ body{
 }
 
 #score-item-clickable{
-    border: outset #f3edc1 0.5vh;
     background-color: #e2ddb4;
+    border-left: outset #f3edc1;
 }
 
 #score-item-noclickable{
-    border: inset #e0dcbd 0.5vh;
-    background-color: #d5d1b3;
+    background-color: #b0ac8d;
 }
 
 /*Score Box*/
@@ -97,7 +98,7 @@ body{
     height: 5.9%;
     width: 100%;
     box-sizing: border-box;
-    border: inset #c8c3a2 0.5vh;
+    border-top: double #750e06 0.8vh;
     justify-content: center;
     align-items: center;
     font-size: 8vh;

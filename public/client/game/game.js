@@ -42,6 +42,7 @@ socket.on("reconnect:sync", res => {
 function buildScoresheet(){
     middleBox.innerHTML = null;
     const playerScore = localPlayer.score;
+    let i = 0;
     playerScore.forEach(scoreEntry => {
         if(scoreEntry.entryTitle === "sum-comb" || scoreEntry.entryTitle === "sum-nbr" || 
         scoreEntry.entryTitle === "bonus" || scoreEntry.points !== null){
@@ -49,10 +50,17 @@ function buildScoresheet(){
                 <div class="score-item" id="score-item-noclickable">${scoreEntry.entryTitle}</div>
             `
         }else{
-            middleBox.innerHTML += `
-                <div class="score-item" id="score-item-clickable">${scoreEntry.entryTitle}</div>
-            `
+            if(i === 0 || i === 8){
+                middleBox.innerHTML += `
+                    <div class="score-item" id="score-item-clickable" style="border-top:inset #a5a184">${scoreEntry.entryTitle}</div>
+                `
+            }else{
+                middleBox.innerHTML += `
+                    <div class="score-item" id="score-item-clickable">${scoreEntry.entryTitle}</div>
+                `
+            }
         }
+        i++;
     });
 }
 
