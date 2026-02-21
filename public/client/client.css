@@ -86,7 +86,7 @@ body{
 
 .score-item.selected{
     background-color: #b0ac8d;
-    border: #C3110C 0.5vh;
+    border: solid #C3110C 0.2vh;
 }
 
 .score-item.clickable{
@@ -100,6 +100,11 @@ body{
     border: none;
     /*border-color: #ede8be;
     border-style: inset;*/
+}
+
+.score-item.sum-item{
+    background-color: #918e75;
+    border: none;
 }
 
 .score-item.top{

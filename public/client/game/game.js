@@ -24,17 +24,34 @@ function main(){
     socket.connect();
 }
 
-document.body.addEventListener('click', (event) => {//TODO: doesnt work
-  if (event.target.classList.contains('.score-item.clickable')) {
-    console.log('Geklickt:', event.target.textContent);
-  }
-});
+function addClickListeners(){//TODO: Just set the selected item to selected and rerender the whole list
+    const values = document.getElementsByClassName("score-item");
+    for(let i = 0; i < values.length; i++){
+
+        if(values[i].classList.contains("clickable")){
+
+            values[i].addEventListener("click", () =>{
+
+                for(let j = 0; j < values.length; j++){
+
+                    if(values[j].classList.contains("selected")){
+                        values[j].classList.add("clickable");
+                        values[j].classList.remove("selected");
+                    }
+                }
+                values[i].classList.remove("clickable");
+                values[i].classList.add("selected");
+            });
+        }
+    }
+}
 
 socket.on("connect:sync", player => {
     localPlayer = player;
     localScoreSheet = player.score;
     buildScoresheet();
     updateScore();
+    addClickListeners();
 });
 
 socket.on("reconnect:sync", res => {
@@ -47,6 +64,7 @@ socket.on("reconnect:sync", res => {
     players.forEach(p => {
         
     });
+    addClickListeners();
 });
 
 
@@ -63,7 +81,10 @@ function buildScoresheet(){
             div.classList.add("clickable");
             renderEntry(i, div);
         }
-        else div.classList.add("noclickable");
+        else{
+            if(isSumEntry(localScoreSheet[i])) div.classList.add("sum-item");
+            else div.classList.add("noclickable");
+        }   
 
         console.log(div)//temp
 
@@ -72,13 +93,18 @@ function buildScoresheet(){
     }
 }
 
+function isSumEntry(scoreEntry){
+    return scoreEntry.entryTitle === "sum-comb" || 
+    scoreEntry.entryTitle === "sum-nbr" ||
+    scoreEntry.entryTitle === "bonus";
+}
+
 function isClickable(scoreEntry){
     return scoreEntry.entryTitle !== "sum-comb" && 
     scoreEntry.entryTitle !== "sum-nbr" && 
     scoreEntry.entryTitle !== "bonus" && 
-    scoreEntry.entryTitle !== "two" &&//temp
-    scoreEntry.entryTitle !== "full-h" &&//temp
-    scoreEntry.entryTitle !== "three-oak" &&//temp
+    scoreEntry.entryTitle !== "three-oak" && 
+    scoreEntry.entryTitle !== "six" && 
     scoreEntry.points === null;
 }
 
