@@ -49,7 +49,6 @@ body{
     justify-content: center;
     align-items: center;
     width: 20%;
-    padding: 20px;
 }
 
 /*dice-box*/
@@ -57,9 +56,9 @@ body{
     display: flex;
     height: 22%;
     width: 100%;
-    background-color: #820f07;
+    background-color: #b0120c;
     box-sizing: border-box;
-    border: inset #750e06 1vh;
+    border: inset #9f1107 1vh;
 }
 
 /*middle-box*/
@@ -132,14 +131,14 @@ body{
 
 #score-box{
     display: flex;
-    background-color: #b0ac8d;
     height: 5.9%;
     width: 100%;
     box-sizing: border-box;
-    border-top: double #750e06 0.8vh;
+    background-color: #b0120c;
+    border: inset #9f1107 1vh;
     justify-content: center;
     align-items: center;
-    font-size: 8vh;
+    font-size: 6vh;
 }
 
 /*Bottom Box*/
@@ -149,13 +148,18 @@ body{
     height: 11%;
     width: 100%;
     background-color: #E2DDB4;
+    border: outset #f3edc1 0.5vh;
+    box-sizing: border-box;
 }
 
 /*Buttons*/
-#button-square{
-    width: 80%;
-    height: 80%;
+#button-square-top{
+    height: 13vw;
+    max-height: 80%;
     object-fit: contain;
+    box-sizing: border-box;
+    border: outset #f3edc1 0.5vh;
+    aspect-ratio: 1/1;
 }
 
 /*modal*/
