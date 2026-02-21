@@ -86,7 +86,12 @@ body{
 
 .score-item.selected{
     background-color: #b0ac8d;
-    border: solid #C3110C 0.2vh;
+    border-top-width: 0.3vh;
+    border-bottom-width: 0.3vh;
+    border-right-width: 0.3vh;
+    border-left-width: 0.3vh;
+    border-color: #C3110C;
+    border-style: solid;
 }
 
 .score-item.clickable{
@@ -185,7 +190,7 @@ body{
 }
 
 .modal-input:focus{
-    outline: 5px solid #C3110C
+    outline: 0.3vh solid #C3110C
 }
 
 .modal-wide-button{

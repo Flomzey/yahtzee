@@ -24,23 +24,19 @@ function main(){
     socket.connect();
 }
 
-function addClickListeners(){//TODO: Just set the selected item to selected and rerender the whole list
+function addClickListeners(){
     const values = document.getElementsByClassName("score-item");
     for(let i = 0; i < values.length; i++){
-
         if(values[i].classList.contains("clickable")){
-
             values[i].addEventListener("click", () =>{
-
-                for(let j = 0; j < values.length; j++){
-
-                    if(values[j].classList.contains("selected")){
-                        values[j].classList.add("clickable");
-                        values[j].classList.remove("selected");
+                localScoreSheet.forEach(scoreEntry => {
+                    if(scoreEntry.entryTitle === values[i].dataset.entryTitle){
+                        scoreEntry.selected = true;
+                    }else{
+                        if(scoreEntry.selected) scoreEntry.selected = false;
                     }
-                }
-                values[i].classList.remove("clickable");
-                values[i].classList.add("selected");
+                });
+                buildScoresheet();
             });
         }
     }
@@ -51,12 +47,14 @@ socket.on("connect:sync", player => {
     localScoreSheet = player.score;
     buildScoresheet();
     updateScore();
-    addClickListeners();
 });
 
 socket.on("reconnect:sync", res => {
     localPlayer = res.player;
-    localScoreSheet = res.player.score;
+    localScoreSheet = res.player.score.map(scoreEntry => ({
+        ...scoreEntry,
+        selected: false
+    }));
     buildScoresheet();
     updateScore();
     const game = res.publicGame.game;
@@ -64,7 +62,6 @@ socket.on("reconnect:sync", res => {
     players.forEach(p => {
         
     });
-    addClickListeners();
 });
 
 
@@ -73,23 +70,21 @@ function buildScoresheet(){
     middleBox.innerHTML = null;
     for(let i = 0; i < localScoreSheet.length; i++){
         const div = document.createElement("div");
-
+        div.dataset.entryTitle = localScoreSheet[i].entryTitle;
         div.classList.add("score-item");
-        div.innerHTML = `${localScoreSheet[i].entryTitle}`
+        //div.innerHTML = `${localScoreSheet[i].entryTitle}`//temporary, missing proper UI
 
         if(isClickable(localScoreSheet[i])) {
             div.classList.add("clickable");
             renderEntry(i, div);
         }
         else{
-            if(isSumEntry(localScoreSheet[i])) div.classList.add("sum-item");
+            if(localScoreSheet[i].selected) div.classList.add("selected");
+            else if(isSumEntry(localScoreSheet[i])) div.classList.add("sum-item");
             else div.classList.add("noclickable");
-        }   
-
-        console.log(div)//temp
-
+        }
+        addClickListeners();
         middleBox.appendChild(div);
-        console.log(localScoreSheet[i])//temp
     }
 }
 
@@ -103,8 +98,7 @@ function isClickable(scoreEntry){
     return scoreEntry.entryTitle !== "sum-comb" && 
     scoreEntry.entryTitle !== "sum-nbr" && 
     scoreEntry.entryTitle !== "bonus" && 
-    scoreEntry.entryTitle !== "three-oak" && 
-    scoreEntry.entryTitle !== "six" && 
+    !scoreEntry.selected &&
     scoreEntry.points === null;
 }
 
@@ -122,7 +116,6 @@ function renderEntry(i, div){
     }
 
     if(i === 0){//topleft corner
-        console.log(isClickable(localScoreSheet[i+1]))
         if(!isClickable(localScoreSheet[i+1])) div.classList.add("bot"); //bottom element is non clickable
         if(!isClickable(localScoreSheet[i+8])) div.classList.add("right"); //right element is non clickable 
         return;
