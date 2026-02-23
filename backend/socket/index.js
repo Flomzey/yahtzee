@@ -1,4 +1,5 @@
 import lobbyHandlers from "./lobby.js";
+import gameHandlers from "./gameplay.js";
 import * as dtos  from "../data/dtos.js";
 import gameSave from "../data/gameSave.js";
 import { gamesGo, gameGo, playerGo, scoreEntryGo } from "../data/gameObjects.js";
@@ -8,6 +9,7 @@ export default function setupSockets(io){
         onConnect(socket);
 
         lobbyHandlers(socket, io);
+        gameHandlers(socket, io);
 
         socket.on("disconnect", (reason) => {
             onDisconnect(socket, reason);

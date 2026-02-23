@@ -23,12 +23,13 @@ body{
 /*Top box*/
 .top-box{
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-content: center;
+    align-items: center;
     height: 11%;
     width: 100%;
     background-color: #E2DDB4;
-    border: outset #f3edc1 0.5vh;
+    border: outset #f3edc1 clamp(5px, 0.5vh, 10px);
     box-sizing: border-box;
 }
 
@@ -48,7 +49,8 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 20%;
+    width: 15%;
+    aspect-ratio: 1/1;
 }
 
 /*dice-box*/
@@ -58,7 +60,7 @@ body{
     width: 100%;
     background-color: #b0120c;
     box-sizing: border-box;
-    border: inset #9f1107 1vh;
+    border: inset #9f1107 clamp(5px, 0.8vh, 15px);
 }
 
 /*middle-box*/
@@ -66,7 +68,7 @@ body{
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
-    height: 50%;
+    height: 52%;
     width: 100%;
     background-color: #e2ddb4;
 }
@@ -85,11 +87,7 @@ body{
 
 .score-item.selected{
     background-color: #b0ac8d;
-    border-top-width: 0.3vh;
-    border-bottom-width: 0.3vh;
-    border-right-width: 0.3vh;
-    border-left-width: 0.3vh;
-    border-color: #C3110C;
+    border: #C3110C clamp(5px, 0.3vh, 10px);
     border-style: solid;
 }
 
@@ -112,19 +110,19 @@ body{
 }
 
 .score-item.top{
-    border-top-width: 0.5vh;
+    border-top-width: clamp(5px, 0.5vh, 10px);
 }
 
 .score-item.right{
-    border-right-width: 0.5vh;
+    border-right-width: clamp(5px, 0.5vh, 10px);
 }
 
 .score-item.left{
-    border-left-width: 0.5vh;
+    border-left-width: clamp(5px, 0.5vh, 10px);
 }
 
 .score-item.bot{
-    border-bottom-width: 0.5vh;
+    border-bottom-width: clamp(5px, 0.5vh, 10px);
 }
 
 /*Score Box*/
@@ -135,31 +133,48 @@ body{
     width: 100%;
     box-sizing: border-box;
     background-color: #b0120c;
-    border: inset #9f1107 1vh;
+    border: inset #9f1107 clamp(5px, 0.8vh, 15px);
     justify-content: center;
     align-items: center;
-    font-size: 6vh;
+    font-size: 6.5vh;
 }
 
 /*Bottom Box*/
 
 .bottom-box{
     display: flex;
-    height: 11%;
+    justify-content: space-around;
+    align-items: center;
+    height: 9%;
     width: 100%;
     background-color: #E2DDB4;
-    border: outset #f3edc1 0.5vh;
+    border: outset #f3edc1 clamp(5px, 0.5vh, 10px);
     box-sizing: border-box;
 }
 
+.bottom-button-box{
+    display:flex;
+    height: 80%;
+    width: 44%;
+}
+
 /*Buttons*/
-#button-square-top{
-    height: 13vw;
-    max-height: 80%;
+.button{
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     box-sizing: border-box;
-    border: outset #f3edc1 0.5vh;
-    aspect-ratio: 1/1;
+    background-color: #E2DDB4;
+    border: outset #f3edc1 clamp(5px, 0.5vh, 15px);
+}
+
+.button.pressed{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    box-sizing: border-box;
+    background-color: #b0ac8d;
+    border: inset #9e9b80 clamp(5px, 0.5vh, 15px);
 }
 
 /*modal*/

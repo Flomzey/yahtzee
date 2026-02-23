@@ -1,6 +1,7 @@
 const middleBox = document.getElementById("middle-box");
 const scoreBox = document.getElementById("score-box");
 const clickableScoreItems = document.querySelectorAll(".score-item.clickable");
+const rollBtn = document.getElementById("roll-dice");
 
 let players;
 let localPlayer;
@@ -22,24 +23,35 @@ function main(){
         role: "player"
     };
     socket.connect();
+    addButtonAnimations();
 }
 
-function addClickListeners(){
-    const values = document.getElementsByClassName("score-item");
-    for(let i = 0; i < values.length; i++){
-        if(values[i].classList.contains("clickable")){
-            values[i].addEventListener("click", () =>{
+function addScoreListClickListeners(){
+    const scores = document.querySelectorAll(".score-item");
+    scores.forEach(score => {
+        if(score.classList.contains("clickable")){
+            score.addEventListener("click", () =>{
                 localScoreSheet.forEach(scoreEntry => {
-                    if(scoreEntry.entryTitle === values[i].dataset.entryTitle){
+                    if(scoreEntry.entryTitle === score.dataset.entryTitle){
                         scoreEntry.selected = true;
                     }else{
                         if(scoreEntry.selected) scoreEntry.selected = false;
                     }
                 });
-                buildScoresheet();
+                buildScoresheet(); // have to rebuild the scoresheet to make changes effective
             });
         }
-    }
+    });
+}
+
+function addButtonAnimations(){
+    const buttons = document.querySelectorAll(".button");
+    buttons.forEach(button => {
+        button.addEventListener("click", () => {
+            buttonAnimation(button);
+            handleButtonPress(button);
+        });
+    });
 }
 
 socket.on("connect:sync", player => {
@@ -59,12 +71,26 @@ socket.on("reconnect:sync", res => {
     updateScore();
     const game = res.publicGame.game;
     players = game.players;
-    players.forEach(p => {
-        
-    });
 });
 
+function handleButtonPress(button){
+    switch(button.id){
+        case "roll-dice":
+            socket.emit("player:roll", localPlayer);
+            break;
+        case "save": console.log("save")
+            break;
+        case "menu": console.log("menu")
+            break;
+        case "quit": console.log("quit")
+    }
+}
 
+async function buttonAnimation(button){
+    button.classList.add("pressed");
+    await sleep(180);
+    button.classList.remove("pressed");
+}
 
 function buildScoresheet(){
     middleBox.innerHTML = null;
@@ -83,9 +109,9 @@ function buildScoresheet(){
             else if(isSumEntry(localScoreSheet[i])) div.classList.add("sum-item");
             else div.classList.add("noclickable");
         }
-        addClickListeners();
         middleBox.appendChild(div);
     }
+    addScoreListClickListeners(); //readd the listeners so the next click is registered
 }
 
 function isSumEntry(scoreEntry){
@@ -149,4 +175,8 @@ function renderEntry(i, div){
 
 function updateScore(){
     scoreBox.innerHTML = localPlayer.totalPoints;
+}
+
+function sleep(milliseconds) {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
