@@ -1,8 +1,8 @@
-import gameSave from "../data/gameSave.js";
+import gameActions from "../game/gameActions.js";
 
 export default function gameHandlers(socket, io){
     socket.on("player:roll", data => {
         const {gameId, playerId, role} = socket.handshake.auth;
-        console.log(gameId, playerId, role);
+        console.log(gameActions.rollDice([null, null, null, null, null]));
     })
 }
