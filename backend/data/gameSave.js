@@ -14,7 +14,9 @@ export default{
     setPlayerSocketId,
     getGame,
     setGameSocketId,
-    getPublicGame
+    getPublicGame,
+    ifPlayerExists,
+    updateCurrentRoll
 }
 
 /**
@@ -58,6 +60,24 @@ export function ifExists(gameId){
     return {
         ok: true,
         reason: reasons.JOINABLE
+    };
+}
+
+export function ifPlayerExists(gameId, playerId){
+    const {ok} = ifExists(gameId);
+    if(ok){
+        if(games.get(gameId).players.has(playerId)) return {
+            ok: true,
+            reason: reasons.EXISTS
+        };
+        return {
+            ok: false,
+            reason: reasons.DOESNTEXIST
+        };
+    }
+    return {
+        ok: false,
+        reason: reasons.DOESNTEXIST
     };
 }
 
@@ -187,6 +207,21 @@ export function getPlayer(gameId, identifyer){
     };
 }
 
+function updateCurrentRoll(gameId, playerId, newRoll){
+    const {ok} = ifPlayerExists(gameId, playerId);
+    if(ok){
+        games.get(gameId).players.get(playerId).currentRoll = newRoll;
+        return {
+            ok: true,
+            reason: reasons.SUCCESS
+        };
+    }
+    return {
+        ok: false,
+        reason: reasons.DOESNTEXIST
+    };
+}
+
 function removeIds(game){
     const parsed = publicGameGo.safeParse(game);
 
@@ -218,6 +253,7 @@ function createNewPlayer(playerName){
         socketId: null,
         isTurn: false,
         isReady: false,
+        currentRoll: new Array(),
         rollsLeft: 0,
         totalPoints: 0
     };

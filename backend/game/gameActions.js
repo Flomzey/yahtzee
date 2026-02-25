@@ -1,5 +1,3 @@
-import gameSave from "../data/gameSave.js";
-
 export default{
     rollDice,
 }

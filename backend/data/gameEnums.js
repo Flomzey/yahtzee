@@ -17,7 +17,8 @@ const reasons = {
     JOINABLE: "canjoin",
     DOESNTEXIST: "noexist",
     CREATIONFAIL: "crefail",
-    SUCCESS: "success"
+    SUCCESS: "success",
+    EXISTS: "exists"
 }
 
 const categories = {

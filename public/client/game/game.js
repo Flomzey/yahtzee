@@ -5,6 +5,7 @@ const rollBtn = document.getElementById("roll-dice");
 
 let players;
 let localPlayer;
+let currentDice = [null, null, null, null, null];
 let localScoreSheet = new Array;
 
 const socket = io("ws://127.0.0.1:3000", 
@@ -76,7 +77,7 @@ socket.on("reconnect:sync", res => {
 function handleButtonPress(button){
     switch(button.id){
         case "roll-dice":
-            socket.emit("player:roll", localPlayer);
+            socket.emit("player:roll", currentDice);
             break;
         case "save": console.log("save")
             break;

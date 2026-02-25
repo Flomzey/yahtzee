@@ -22,6 +22,7 @@ const player = z.object({
     socketId: z.string().nullable(),
     isTurn: z.boolean(),
     isReady: z.boolean(),
+    currentRoll: z.array(z.int().nullable()),
     rollsLeft: z.int(),
     totalPoints: z.int()
 });
