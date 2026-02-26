@@ -1,11 +1,15 @@
 const middleBox = document.getElementById("middle-box");
 const scoreBox = document.getElementById("score-box");
 const clickableScoreItems = document.querySelectorAll(".score-item.clickable");
+const upperRoll = document.getElementById("dice-box-top");
+const lowerRoll = document.getElementById("dice-box-bot");
 const rollBtn = document.getElementById("roll-dice");
+const diceBox = document.getElementById("dice-box");
 
 let players;
 let localPlayer;
-let currentDice = [null, null, null, null, null];
+let localCurrentDice = [null, null, null, null, null];
+let selectedDice = [false, false, false, false, false];
 let localScoreSheet = new Array;
 
 const socket = io("ws://127.0.0.1:3000", 
@@ -45,6 +49,24 @@ function addScoreListClickListeners(){
     });
 }
 
+function addDiceClickListeners(){
+    const dice = document.querySelectorAll(".die");
+    dice.forEach(die => {
+        die.addEventListener("click", () => {
+            const index = die.dataset.index;
+
+            if(selectedDice[index]){
+                die.classList.remove("pressed");
+                die.classList.add("no-pressed");
+            }else{
+                die.classList.remove("no-pressed");
+                die.classList.add("pressed");
+            }
+            selectedDice[index] = !selectedDice[index];
+        })
+    });
+}
+
 function addButtonAnimations(){
     const buttons = document.querySelectorAll(".button");
     buttons.forEach(button => {
@@ -74,10 +96,22 @@ socket.on("reconnect:sync", res => {
     players = game.players;
 });
 
+socket.on("player:roll:res", res => {
+    localCurrentDice = res;
+    buildDiceRoll();
+})
+
 function handleButtonPress(button){
     switch(button.id){
         case "roll-dice":
-            socket.emit("player:roll", currentDice);
+            let reqDice = localCurrentDice;
+            for(let i = 0; i < selectedDice.length; i++){
+                if(!selectedDice[i]){
+                    reqDice[i] = null;
+                }
+            }
+            console.log(reqDice);
+            socket.emit("player:roll", reqDice);
             break;
         case "save": console.log("save")
             break;
@@ -93,17 +127,44 @@ async function buttonAnimation(button){
     button.classList.remove("pressed");
 }
 
+function buildDiceRoll(){
+    lowerRoll.innerHTML = null;
+    upperRoll.innerHTML = null;
+    let i = 0;
+    for(i = 0; i < 2; i++){
+        const div = renderDie(localCurrentDice[i], selectedDice[i]);
+        div.dataset.index = i;
+        upperRoll.appendChild(div);
+    }
+    for(i = i; i < 5; i++){
+        const div = renderDie(localCurrentDice[i], selectedDice[i]);
+        div.dataset.index = i;
+        lowerRoll.appendChild(div);
+    }
+    addDiceClickListeners();
+}
+
+function renderDie(dots, pressed){
+    const res = document.createElement("div");
+    if(pressed){
+        res.classList.add("die", "pressed", `eye${dots}`);
+        return res;
+    }
+    res.classList.add("die", "no-pressed", `eye${dots}`);
+    return res;
+}
+
 function buildScoresheet(){
     middleBox.innerHTML = null;
     for(let i = 0; i < localScoreSheet.length; i++){
         const div = document.createElement("div");
         div.dataset.entryTitle = localScoreSheet[i].entryTitle;
         div.classList.add("score-item");
-        //div.innerHTML = `${localScoreSheet[i].entryTitle}`//temporary, missing proper UI
+        createInnerEntry(i, div);
 
         if(isClickable(localScoreSheet[i])) {
             div.classList.add("clickable");
-            renderEntry(i, div);
+            //renderEntry(i, div);
         }
         else{
             if(localScoreSheet[i].selected) div.classList.add("selected");
@@ -129,7 +190,7 @@ function isClickable(scoreEntry){
     scoreEntry.points === null;
 }
 
-function renderEntry(i, div){
+/*function renderEntry(i, div){
     if(i === 0 || i === 8){
         div.classList.add("top");
     }
@@ -172,6 +233,22 @@ function renderEntry(i, div){
         if(!isClickable(localScoreSheet[i+1])) div.classList.add("bot");
         if(!isClickable(localScoreSheet[i-8])) div.classList.add("left");
     }
+}*/
+
+function createInnerEntry(i, div){
+    const entryLogoDiv = document.createElement("div");
+    entryLogoDiv.classList.add("score-item-inner-logo");
+    div.appendChild(entryLogoDiv);
+    const entryDiceDiv = document.createElement("div");
+    entryDiceDiv.classList.add("score-item-inner-dice");
+    div.appendChild(entryDiceDiv);
+    const entryScoreText = document.createElement("div");
+    entryScoreText.classList.add("score-item-points");
+    entryScoreText.innerHTML = localScoreSheet[i].points === null ? "0" : localScoreSheet[i].points;
+    const entryScoreDiv = document.createElement("div");
+    entryScoreDiv.appendChild(entryScoreText);
+    entryScoreDiv.classList.add("score-item-inner-points");
+    div.appendChild(entryScoreDiv);
 }
 
 function updateScore(){

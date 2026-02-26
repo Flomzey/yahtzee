@@ -26,7 +26,7 @@ body{
     justify-content: space-around;
     align-content: center;
     align-items: center;
-    height: 11%;
+    height: 10%;
     width: 100%;
     background-color: #E2DDB4;
     border: outset #f3edc1 clamp(5px, 0.5vh, 10px);
@@ -42,52 +42,97 @@ body{
 
 .top-title-image{
     width: 100%;
-    object-fit: contain;
+    background-image: url("../images/logo.png");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .top-lr-box{
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 15%;
+    height: 85%;
     aspect-ratio: 1/1;
 }
 
 /*dice-box*/
 .dice-box{
     display: flex;
-    height: 22%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    height: 20%;
     width: 100%;
     background-color: #b0120c;
     box-sizing: border-box;
     border: inset #9f1107 clamp(5px, 0.8vh, 15px);
 }
 
+.dice-box-top-bot{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 50%;
+}
+
+.die{
+    display: flex;
+    margin-left: 5%;
+    margin-right: 5%;
+    height: 85%;
+    aspect-ratio: 1/1;
+    background-size: contain; 
+    background-repeat: no-repeat;
+    background-position: center;
+    box-sizing: border-box;
+}
+
+.die.no-pressed{
+    background-color: #e2ddb4;
+    border: outset #f3edc1 clamp(5px, 0.5vh, 15px);
+}
+
+.die.pressed{
+    background-color: #b0ac8d;
+    border: inset #9e9b80 clamp(5px, 0.5vh, 15px);
+}
+
+.die.eye1{background-image: url("../images/eyes/1.png")}
+.die.eye2{background-image: url("../images/eyes/2.png")}
+.die.eye3{background-image: url("../images/eyes/3.png")}
+.die.eye4{background-image: url("../images/eyes/4.png")}
+.die.eye5{background-image: url("../images/eyes/5.png")}
+.die.eye6{background-image: url("../images/eyes/6.png")}
+
 /*middle-box*/
 #middle-box{
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
-    height: 52%;
+    height: 55%;
     width: 100%;
     background-color: #e2ddb4;
 }
 
 .score-item{
     display: flex;
+    justify-content: center;
+    align-items: center;
     height: 12.5%;
     width: 50%;
     box-sizing: border-box;
-    border-top-width: 0;
-    border-bottom-width: 0;
-    border-right-width: 0;
-    border-left-width: 0;
+    border-top-width: clamp(5px, 0.5vh, 10px);
+    border-bottom-width: clamp(5px, 0.5vh, 10px);
+    border-right-width: clamp(5px, 0.5vh, 10px);
+    border-left-width: clamp(5px, 0.5vh, 10px);
     font-size: 5vh;
 }
 
 .score-item.selected{
     background-color: #b0ac8d;
-    border: #C3110C clamp(5px, 0.3vh, 10px);
+    border: #C3110C clamp(1px, 0.3vh, 10px);
     border-style: solid;
 }
 
@@ -99,14 +144,12 @@ body{
 
 .score-item.noclickable{
     background-color: #b0ac8d;
-    border: none;
-    /*border-color: #ede8be;
-    border-style: inset;*/
+    border: transparent;
 }
 
 .score-item.sum-item{
     background-color: #918e75;
-    border: none;
+    border: transparent;
 }
 
 .score-item.top{
@@ -123,6 +166,35 @@ body{
 
 .score-item.bot{
     border-bottom-width: clamp(5px, 0.5vh, 10px);
+}
+
+.score-item-inner-logo{
+    display: flex;
+    height: 100%;
+    aspect-ratio: 1/1;
+    
+}
+
+.score-item-inner-dice{
+    display: flex;
+    height: 100%;
+    width: 60%;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.score-item-inner-points{
+    display: flex;
+    height: 100%;
+    aspect-ratio: 1/1;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.score-item-points{
+    user-select: none 1px;
 }
 
 /*Score Box*/
@@ -145,7 +217,7 @@ body{
     display: flex;
     justify-content: space-around;
     align-items: center;
-    height: 9%;
+    height: 10%;
     width: 100%;
     background-color: #E2DDB4;
     border: outset #f3edc1 clamp(5px, 0.5vh, 10px);
@@ -154,17 +226,21 @@ body{
 
 .bottom-button-box{
     display:flex;
-    height: 80%;
-    width: 44%;
+    height: 85%;
+    width: 48%;
+    font-size: 2vh;
 }
 
 /*Buttons*/
 .button{
+    display: flex;
     width: 100%;
     height: 100%;
     object-fit: contain;
     box-sizing: border-box;
     background-color: #E2DDB4;
+    align-items: center;
+    justify-content: center;
     border: outset #f3edc1 clamp(5px, 0.5vh, 15px);
 }
 
@@ -174,7 +250,13 @@ body{
     object-fit: contain;
     box-sizing: border-box;
     background-color: #b0ac8d;
+    color: #E2DDB4;
     border: inset #9e9b80 clamp(5px, 0.5vh, 15px);
+}
+
+.button-text{
+    font-size: 5vh;
+    user-select: none;
 }
 
 /*modal*/
