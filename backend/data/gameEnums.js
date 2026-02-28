@@ -22,20 +22,23 @@ const reasons = {
 }
 
 const categories = {
-    ONE: "one",
-    TWO: "two",
-    THREE: "three",
-    FOUR: "four",
-    FIVE: "five",
-    SIX: "six",
-    NBR_SUM: "sum-nbr",
-    BONUS: "bonus",
-    THREE_OF_A_KIND: "three-oak",
-    FOUR_OF_A_KIND: "four-oak",
-    FULL_HOUSE: "full-h",
-    SMALL_STRAIGHT: "small-str",
-    BIG_STRAIGHT: "big-str",
-    YAHTZEE: "yahtzee",
-    CHANCE: "chance",
-    COMBINATION_SUM: "sum-comb",
+    ONE: { key: "one", number: 1 },
+    TWO: { key: "two", number: 2 },
+    THREE: { key: "three", number: 3 },
+    FOUR: { key: "four", number: 4 },
+    FIVE: { key: "five", number: 5 },
+    SIX: { key: "six", number: 6 },
+
+    NBR_SUM: { key: "sum-nbr" },
+    BONUS: { key: "bonus" },
+
+    THREE_OF_A_KIND: { key: "three-oak" },
+    FOUR_OF_A_KIND: { key: "four-oak" },
+    FULL_HOUSE: { key: "full-h" },
+    SMALL_STRAIGHT: { key: "small-str" },
+    BIG_STRAIGHT: { key: "big-str" },
+    YAHTZEE: { key: "yahtzee" },
+    CHANCE: { key: "chance" },
+
+    COMBINATION_SUM: { key: "sum-comb" },
 }

@@ -5,6 +5,7 @@ const upperRoll = document.getElementById("dice-box-top");
 const lowerRoll = document.getElementById("dice-box-bot");
 const rollBtn = document.getElementById("roll-dice");
 const diceBox = document.getElementById("dice-box");
+const saveBtn = document.getElementById("save");
 
 let players;
 let localPlayer;
@@ -28,7 +29,7 @@ function main(){
         role: "player"
     };
     socket.connect();
-    addButtonAnimations();
+    addButtonListeners();
 }
 
 function addScoreListClickListeners(){
@@ -43,6 +44,7 @@ function addScoreListClickListeners(){
                         if(scoreEntry.selected) scoreEntry.selected = false;
                     }
                 });
+                if(localCurrentDice[1] !== null) saveBtn.classList.remove("pressed");
                 buildScoresheet(); // have to rebuild the scoresheet to make changes effective
             });
         }
@@ -67,10 +69,11 @@ function addDiceClickListeners(){
     });
 }
 
-function addButtonAnimations(){
+function addButtonListeners(){
     const buttons = document.querySelectorAll(".button");
     buttons.forEach(button => {
         button.addEventListener("click", () => {
+            if(button.classList.contains("pressed")) return;
             buttonAnimation(button);
             handleButtonPress(button);
         });
@@ -99,7 +102,16 @@ socket.on("reconnect:sync", res => {
 socket.on("player:roll:res", res => {
     localCurrentDice = res;
     buildDiceRoll();
-})
+    buildScoresheet();
+});
+
+socket.on("player:save:sync", player => {
+    console.log(player)
+    localPlayer = player;
+    localScoreSheet = player.score;
+    buildScoresheet();
+    updateScore();
+});
 
 function handleButtonPress(button){
     switch(button.id){
@@ -110,18 +122,26 @@ function handleButtonPress(button){
                     reqDice[i] = null;
                 }
             }
-            console.log(reqDice);
             socket.emit("player:roll", reqDice);
-            break;
-        case "save": console.log("save")
-            break;
+            unselectScoresheet();
+        break;
+        case "save":
+            localScoreSheet.forEach(entry => {
+                if(entry.selected){
+                    socket.emit("player:save:category", entry.entryTitle);
+                }
+            });
+            refreshDice();
+            saveBtn.classList.add("pressed");
+        break;
         case "menu": console.log("menu")
-            break;
+        break;
         case "quit": console.log("quit")
     }
 }
 
 async function buttonAnimation(button){
+    if(button.id === "save") return;
     button.classList.add("pressed");
     await sleep(180);
     button.classList.remove("pressed");
@@ -160,20 +180,36 @@ function buildScoresheet(){
         const div = document.createElement("div");
         div.dataset.entryTitle = localScoreSheet[i].entryTitle;
         div.classList.add("score-item");
-        createInnerEntry(i, div);
 
         if(isClickable(localScoreSheet[i])) {
-            div.classList.add("clickable");
-            //renderEntry(i, div);
+            if(localCurrentDice[1] === null) div.classList.add("noclickable");
+            else div.classList.add("clickable");
         }
         else{
             if(localScoreSheet[i].selected) div.classList.add("selected");
             else if(isSumEntry(localScoreSheet[i])) div.classList.add("sum-item");
             else div.classList.add("noclickable");
         }
+        renderInnerEntry(i, div);
         middleBox.appendChild(div);
     }
-    addScoreListClickListeners(); //readd the listeners so the next click is registered
+    addScoreListClickListeners(); //read the listeners so the next click is registered
+}
+
+function unselectScoresheet(){
+    localScoreSheet.forEach(entry => {
+        if(entry.selected) entry.selected = false;
+    });
+    saveBtn.classList.add("pressed");
+    console.log(saveBtn);
+    addButtonListeners(); //TODO: i dont know if rendering every button new is good, for this program its fine but maybe reserch it
+}
+
+function refreshDice(){
+    localCurrentDice = [null, null, null, null, null];
+    selectedDice = [false, false, false, false];
+    upperRoll.innerHTML = null;
+    lowerRoll.innerHTML = null;
 }
 
 function isSumEntry(scoreEntry){
@@ -190,65 +226,58 @@ function isClickable(scoreEntry){
     scoreEntry.points === null;
 }
 
-/*function renderEntry(i, div){
-    if(i === 0 || i === 8){
-        div.classList.add("top");
-    }
-    if(i === 7 || i === 15){
-        div.classList.add("bot");
-    }
-    if(i < 8){
-        div.classList.add("left");
-    }else{
-        div.classList.add("right");
-    }
-
-    if(i === 0){//topleft corner
-        if(!isClickable(localScoreSheet[i+1])) div.classList.add("bot"); //bottom element is non clickable
-        if(!isClickable(localScoreSheet[i+8])) div.classList.add("right"); //right element is non clickable 
-        return;
-    }
-    if(i === 8){//topright corner
-        if(!isClickable(localScoreSheet[i+1])) div.classList.add("bot"); //bottom element is non clickable
-        if(!isClickable(localScoreSheet[i-8])) div.classList.add("left"); //left element is non clickable 
-        return;
-    }
-    if(i === 7){//botleft corner
-        if(!isClickable(localScoreSheet[i-1])) div.classList.add("top"); //top element is non clickable
-        if(!isClickable(localScoreSheet[i+8])) div.classList.add("right"); //right element is non clickable 
-        return;
-    }
-    if(i === 15){
-        if(!isClickable(localScoreSheet[i-1])) div.classList.add("top"); //top element is non clickable
-        if(!isClickable(localScoreSheet[i-8])) div.classList.add("left"); //left element is non clickable 
-        return;
-    }
-
-    if(i < 8){
-        if(!isClickable(localScoreSheet[i-1])) div.classList.add("top");
-        if(!isClickable(localScoreSheet[i+1])) div.classList.add("bot");
-        if(!isClickable(localScoreSheet[i+8])) div.classList.add("right");
-    }else{
-        if(!isClickable(localScoreSheet[i-1])) div.classList.add("top");
-        if(!isClickable(localScoreSheet[i+1])) div.classList.add("bot");
-        if(!isClickable(localScoreSheet[i-8])) div.classList.add("left");
-    }
-}*/
-
-function createInnerEntry(i, div){
+function renderInnerEntry(i, div){
     const entryLogoDiv = document.createElement("div");
     entryLogoDiv.classList.add("score-item-inner-logo");
+    renderInnerLogo(entryLogoDiv, div.dataset.entryTitle);
     div.appendChild(entryLogoDiv);
+
     const entryDiceDiv = document.createElement("div");
     entryDiceDiv.classList.add("score-item-inner-dice");
+    if(!isSumEntry(localScoreSheet[i])) renderInnerDice(i, entryDiceDiv);
     div.appendChild(entryDiceDiv);
+
     const entryScoreText = document.createElement("div");
     entryScoreText.classList.add("score-item-points");
     entryScoreText.innerHTML = localScoreSheet[i].points === null ? "0" : localScoreSheet[i].points;
     const entryScoreDiv = document.createElement("div");
     entryScoreDiv.appendChild(entryScoreText);
+
     entryScoreDiv.classList.add("score-item-inner-points");
     div.appendChild(entryScoreDiv);
+}
+
+function renderInnerDice(i, entryDiceDiv){
+    for(let j = 0; j < localScoreSheet[i].dice.length; j++){
+        const dieDiv = document.createElement("div");
+        dieDiv.classList.add("score-die");
+        if(!localScoreSheet[i].dice[j]) dieDiv.classList.add(`eye${localCurrentDice[j]}`);
+        else dieDiv.classList.add(`eye${localScoreSheet[i].dice[j]}`);
+        entryDiceDiv.appendChild(dieDiv);
+    }
+}
+
+function renderInnerLogo(entryLogoDiv, entryTitle){
+    switch(entryTitle){
+        case "one":
+            entryLogoDiv.classList.add("eye1");
+            break;
+        case "two":
+            entryLogoDiv.classList.add("eye2");
+            break;
+        case "three":
+            entryLogoDiv.classList.add("eye3");
+            break;
+        case "four":
+            entryLogoDiv.classList.add("eye4");
+            break;
+        case "five":
+            entryLogoDiv.classList.add("eye5");
+            break;
+        case "six":
+            entryLogoDiv.classList.add("eye6");
+            break;
+    }
 }
 
 function updateScore(){

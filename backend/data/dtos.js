@@ -14,9 +14,12 @@ export {
 }
 
 const scoreEntry = z.object({
-    entryTitle: z.enum(Object.values(categories)),
+    entryTitle: z.enum(Object.values(categories).map(c => c.key)),
     points: z.int().nullable(),
-    dice: z.array().nullable()
+    dice: z.union([
+        z.array(z.int()).min(1),
+        z.array(z.null()).min(1)
+    ])
 });
 
 const player = z.object({

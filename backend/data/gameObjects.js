@@ -11,14 +11,17 @@ export {
 }
 
 const scoreEntry = z.object({
-    entryTitle: z.enum(Object.values(categories)),
+    entryTitle: z.enum(Object.values(categories).map(c => c.key)),
     points: z.int().nullable(),
-    dice: z.array(z.int()).nullable()
+    dice: z.union([
+        z.array(z.int()).min(1),
+        z.array(z.null()).min(1)
+    ])
 });
 
 const player = z.object({
     playerName: z.string(),
-    score: z.map(z.enum(Object.values(categories)), scoreEntry),
+    score: z.map(z.enum(Object.values(categories).map(c => c.key)), scoreEntry),
     socketId: z.string().nullable(),
     isTurn: z.boolean(),
     isReady: z.boolean(),
@@ -29,7 +32,7 @@ const player = z.object({
 
 const publicPlayer = z.object({
     playerName: z.string(),
-    score: z.map(z.enum(Object.values(categories)), scoreEntry),
+    score: z.map(z.enum(Object.values(categories).map(c => c.key)), scoreEntry),
     isTurn: z.boolean(),
     isReady: z.boolean(),
     rollsLeft: z.int(),

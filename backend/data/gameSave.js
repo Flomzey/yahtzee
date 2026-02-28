@@ -16,7 +16,8 @@ export default{
     setGameSocketId,
     getPublicGame,
     ifPlayerExists,
-    updateCurrentRoll
+    updateCurrentRoll,
+    saveCategory
 }
 
 /**
@@ -99,7 +100,7 @@ export function joinGame(gameId, playerName){
         const player = createNewPlayer(playerName, playerId);
         const score = new Map();
 
-        Object.values(categories).forEach(entryTitle => {
+        Object.values(categories).map(c => c.key).forEach(entryTitle => {
             score.set(entryTitle, createNewScoreEntry(entryTitle));
         });
 
@@ -160,6 +161,55 @@ export function setPlayerSocketId(gameId, playerId, newId){
     if(!games.get(gameId).players.has(playerId)) return false;
     games.get(gameId).players.get(playerId).socketId = newId;
     return true;
+}
+
+export function saveCategory(gameId, playerId, categoryTitle){
+    if(!games.has(gameId)) return false;
+    if(!games.get(gameId).players.has(playerId)) return false;
+    const player =  games.get(gameId).players.get(playerId);
+    const scoreToChange = player.score.get(categoryTitle);
+    if(scoreToChange.dice[1] !== null) return false;
+    scoreToChange.dice = player.currentRoll;
+    calculateCategoryScore(scoreToChange);
+    return true;
+}
+
+function calculateCategoryScore(category){
+    switch(category.entryTitle){
+        case categories.ONE.key:
+        case categories.TWO.key:
+        case categories.THREE.key:
+        case categories.FOUR.key:
+        case categories.FIVE.key:
+        case categories.SIX.key:
+            category.points = 0;
+            const categoryLookup = Object.fromEntries(
+                Object.values(categories)
+                .filter(c => typeof c.number === "number")
+                .map(c => [c.key, c.number])
+            );
+            category.dice.forEach(die => {
+                if(categoryLookup[category.entryTitle] === die) category.points += die;
+            });
+        break;
+        case categories.THREE_OF_A_KIND.key:
+        case categories.FOUR_OF_A_KIND.key:
+        
+        break;
+        case categories.FULL_HOUSE.key:
+        
+        break;
+        case categories.SMALL_STRAIGHT.key:
+
+        break;
+        case categories.BIG_STRAIGHT.key:
+
+        break;
+        case categories.YAHTZEE.key:
+
+        break;
+
+    }
 }
 
 /**
@@ -263,6 +313,6 @@ function createNewScoreEntry(entryTitle){
     return{
         entryTitle: entryTitle,
         points: null,
-        dice: null
+        dice: [null, null, null, null, null]
     }
 }
