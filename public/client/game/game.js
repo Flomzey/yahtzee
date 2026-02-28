@@ -80,44 +80,53 @@ function addButtonListeners(){
     });
 }
 
-socket.on("connect:sync", player => {
-    localPlayer = player;
-    localScoreSheet = player.score;
-    buildScoresheet();
-    updateScore();
+socket.on("connect:sync", data => {
+    syncLocalData(data);
 });
 
-socket.on("reconnect:sync", res => {
-    localPlayer = res.player;
-    localScoreSheet = res.player.score.map(scoreEntry => ({
-        ...scoreEntry,
-        selected: false
-    }));
-    buildScoresheet();
-    updateScore();
-    const game = res.publicGame.game;
-    players = game.players;
+socket.on("reconnect:sync", data => {
+    syncLocalData(data);
+    buildDiceRoll();
 });
 
-socket.on("player:roll:res", res => {
-    localCurrentDice = res;
+socket.on("player:sync", data => {
+    syncLocalData(data);
+    buildDiceRoll();
+});
+
+socket.on("player:roll:res", dice => {
+    localCurrentDice = dice;
     buildDiceRoll();
     buildScoresheet();
 });
 
-socket.on("player:save:sync", player => {
-    console.log(player)
-    localPlayer = player;
-    localScoreSheet = player.score;
+socket.on("player:save:sync", data => {//TODO: send publicGame data from server
+    syncLocalData(data);
+});
+
+function syncLocalData(data){
+    localPlayer = data.player;
+    localScoreSheet = data.player.score.map(scoreEntry => ({
+        ...scoreEntry,
+        selected: false
+    }));
+    players = data.publicGame.game.players;
+    if(localPlayer.isTurn) rollBtn.classList.remove("pressed");
+    //else rollBtn.classList.add("pressed");  first implement the whole game logic and logos
+    localCurrentDice = localPlayer.currentRoll;
     buildScoresheet();
     updateScore();
-});
+}
 
 function handleButtonPress(button){
     switch(button.id){
         case "roll-dice":
+            console.log(localCurrentDice);
             let reqDice = localCurrentDice;
+            console.log(selectedDice)
+            console.log(reqDice)
             for(let i = 0; i < selectedDice.length; i++){
+                console.log(i)
                 if(!selectedDice[i]){
                     reqDice[i] = null;
                 }
@@ -148,6 +157,7 @@ async function buttonAnimation(button){
 }
 
 function buildDiceRoll(){
+    if(localCurrentDice[1] === null) return;
     lowerRoll.innerHTML = null;
     upperRoll.innerHTML = null;
     let i = 0;
@@ -201,13 +211,11 @@ function unselectScoresheet(){
         if(entry.selected) entry.selected = false;
     });
     saveBtn.classList.add("pressed");
-    console.log(saveBtn);
-    addButtonListeners(); //TODO: i dont know if rendering every button new is good, for this program its fine but maybe reserch it
-}
+    console.log(saveBtn);}
 
 function refreshDice(){
     localCurrentDice = [null, null, null, null, null];
-    selectedDice = [false, false, false, false];
+    selectedDice = [false, false, false, false, false];
     upperRoll.innerHTML = null;
     lowerRoll.innerHTML = null;
 }

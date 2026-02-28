@@ -303,7 +303,7 @@ function createNewPlayer(playerName){
         socketId: null,
         isTurn: false,
         isReady: false,
-        currentRoll: new Array(),
+        currentRoll: [null, null, null, null, null],
         rollsLeft: 0,
         totalPoints: 0
     };

@@ -111,7 +111,9 @@ function handlePlayerConnection(socket){
     player.score = [...player.score.values()];
 
     if(isReconnect){
-        socket.to(gameId).emit("reconnect:sync", player);
+        socket.to(gameId).emit("reconnect:sync:public", {
+            publicGame: publicGame
+        });
         socket.emit("reconnect:sync", {
             player: player,
             publicGame: publicGame
@@ -120,7 +122,12 @@ function handlePlayerConnection(socket){
         return;
     }
 
-    socket.to(gameId).emit("connect:sync", player);
-    socket.emit("connect:sync", player);
+    socket.to(gameId).emit("connect:sync:public", {
+        publicGame: publicGame
+    });
+    socket.emit("connect:sync", {
+        player: player,
+        publicGame: publicGame
+    });
     console.log(`[socket:onconnect:player] player ${playerId} connected to ${gameId}`);
 }

@@ -27,7 +27,10 @@ const player = z.object({
     score: z.map(z.string(), scoreEntry),
     isTurn: z.boolean(),
     isReady: z.boolean(),
-    currentRoll: z.array(z.int().nullable()),
+    currentRoll: z.union([
+        z.array(z.int()).min(1),
+        z.array(z.null()).min(1)
+    ]),
     rollsLeft: z.int()
 });
 

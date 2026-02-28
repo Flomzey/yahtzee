@@ -17,15 +17,17 @@ export default function gameHandlers(socket, io){
         if(role !== "player") return ;
         if(!gameSave.ifPlayerExists(gameId, playerId)) return;
         gameSave.saveCategory(gameId, playerId, category);
+        gameSave.updateCurrentRoll(gameId, playerId, [null, null, null, null, null]);
 
         const playerres = gameSave.getPlayer(gameId, playerId);
-        console.log(playerres.player.score);
+
+        const publicGame = gameSave.getPublicGame(gameId);
 
         const parsed = playerGo.safeParse(playerres.player);
 
         if(!parsed.success){
             socket.disconnect();
-            console.log("[socket:onconnect:player] dto parse error:");
+            console.log("[socket:player:save:category] dto parse error:");
             console.log(parsed.error);
             return;
         }
@@ -34,6 +36,13 @@ export default function gameHandlers(socket, io){
 
         player.score = [...player.score.values()];
 
-        socket.emit("player:save:sync", player);
+        socket.to(gameId).emit("player:save:sync:public", {
+            publicGame: publicGame
+        })
+
+        socket.emit("player:save:sync", {
+            player: player,
+            publicGame: publicGame
+        });
     })
 }
