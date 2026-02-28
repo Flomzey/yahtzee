@@ -238,7 +238,7 @@ function isSumEntry(scoreEntry){
 function isClickable(scoreEntry){
     return scoreEntry.entryTitle !== "sum-comb" && 
     scoreEntry.entryTitle !== "sum-nbr" && 
-    scoreEntry.entryTitle !== "bonus" && 
+    scoreEntry.entryTitle !== "sum-nbr-bonus" && 
     !scoreEntry.selected &&
     scoreEntry.points === null;
 }
@@ -251,11 +251,11 @@ function renderInnerEntry(i, div){
 
     if(localScoreSheet[i].entryTitle === "sum-nbr-bonus"){
         const bonusDivText = document.createElement("div");
-        bonusDivText.classList.add("score-item-points");
+        bonusDivText.classList.add("score-item-sum-points");
         bonusDivText.innerHTML = localScoreSheet[i].points === null ? "0" : bonus;
         const bonusDiv = document.createElement("div");
         bonusDiv.appendChild(bonusDivText);
-        bonusDiv.classList.add("score-item-inner-points");
+        bonusDiv.classList.add("score-item-inner-bonus-points");
         div.appendChild(bonusDiv);
     }else{
         const entryDiceDiv = document.createElement("div");
@@ -268,9 +268,10 @@ function renderInnerEntry(i, div){
     entryScoreText.classList.add("score-item-points");
     entryScoreText.innerHTML = localScoreSheet[i].points === null ? "0" : localScoreSheet[i].points;
     const entryScoreDiv = document.createElement("div");
-    entryScoreDiv.appendChild(entryScoreText);
-    entryScoreDiv.classList.add("score-item-inner-points");
+    if(isSumEntry(localScoreSheet[i])) entryScoreDiv.classList.add("score-item-inner-sum-points");
+    else entryScoreDiv.classList.add("score-item-inner-points");
 
+    entryScoreDiv.appendChild(entryScoreText);
     div.appendChild(entryScoreDiv);
 }
 

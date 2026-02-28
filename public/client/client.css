@@ -119,13 +119,13 @@ body{
 
 .score-item{
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     height: 12.5%;
     width: 50%;
     box-sizing: border-box;
     border: clamp(5px, 0.5vh, 10px);
-    font-size: 5vh;
+    font-size: 4vh;
     user-select: none;
 }
 
@@ -149,10 +149,6 @@ body{
 .score-item.sum-item{
     background-color: #918e75;
     border: solid transparent clamp(1px, 0.5vh, 10px);
-}
-
-.score-item.sum-item.bonus{
-    justify-content: space-around;
 }
 
 .score-item-inner-logo{
@@ -183,25 +179,34 @@ body{
     background-repeat: no-repeat;
 }
 
+.score-item-inner-sum-points{
+    display: flex;
+    width: 20%;
+    height: 100%;
+    justify-content: right;
+    align-items: center;
+    padding-right: 2%;
+}
+
 .score-item-inner-points{
     display: flex;
     width: 20%;
     aspect-ratio: 1/1;
-    justify-content: center;
+    justify-content: right;
     align-items: center;
-    
+    padding-right: 2%;
 }
 
-.score-item-bonus{
+.score-item-inner-bonus-points{
     display: flex;
-    width: 20%;
-    aspect-ratio: 1/1;
+    width: 56%;
+    height: 100%;
     justify-content: center;
     align-items: center;
 }
 
 .score-item-points{
-    user-select: none 1px;
+    user-select: none;
 }
 
 /*Score Box*/

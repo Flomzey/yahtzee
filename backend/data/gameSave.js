@@ -187,7 +187,6 @@ function calculateSumScores(playerScore){
         switch(entry.entryTitle){
             case categories.NBR_SUM.key:
                 entry.points = sum;
-                sum = 0;
             break;
             case categories.COMBINATION_SUM.key:
                 entry.points = sum;
