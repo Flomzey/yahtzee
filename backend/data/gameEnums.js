@@ -29,15 +29,16 @@ const categories = {
     FIVE: { key: "five", number: 5 },
     SIX: { key: "six", number: 6 },
 
+    BONUS: { key: "bonus" , number: 35 },
     NBR_SUM: { key: "sum-nbr" },
-    BONUS: { key: "bonus" },
+    NBR_SUM_BONUS: { key: "sum-nbr-bonus" },
 
     THREE_OF_A_KIND: { key: "three-oak" },
     FOUR_OF_A_KIND: { key: "four-oak" },
-    FULL_HOUSE: { key: "full-h" },
-    SMALL_STRAIGHT: { key: "small-str" },
-    BIG_STRAIGHT: { key: "big-str" },
-    YAHTZEE: { key: "yahtzee" },
+    FULL_HOUSE: { key: "full-h", number: 25 },
+    SMALL_STRAIGHT: { key: "small-str", number: 30 },
+    BIG_STRAIGHT: { key: "big-str", number: 40 },
+    YAHTZEE: { key: "yahtzee", number: 50 },
     CHANCE: { key: "chance" },
 
     COMBINATION_SUM: { key: "sum-comb" },

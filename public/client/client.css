@@ -151,6 +151,10 @@ body{
     border: solid transparent clamp(1px, 0.5vh, 10px);
 }
 
+.score-item.sum-item.bonus{
+    justify-content: space-around;
+}
+
 .score-item-inner-logo{
     display: flex;
     width: 20%;
@@ -186,6 +190,14 @@ body{
     justify-content: center;
     align-items: center;
     
+}
+
+.score-item-bonus{
+    display: flex;
+    width: 20%;
+    aspect-ratio: 1/1;
+    justify-content: center;
+    align-items: center;
 }
 
 .score-item-points{

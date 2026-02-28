@@ -12,6 +12,7 @@ let localPlayer;
 let localCurrentDice = [null, null, null, null, null];
 let selectedDice = [false, false, false, false, false];
 let localScoreSheet = new Array;
+let bonus = 0;
 
 const socket = io("ws://127.0.0.1:3000", 
     {
@@ -98,6 +99,7 @@ socket.on("player:roll:res", dice => {
     localCurrentDice = dice;
     buildDiceRoll();
     buildScoresheet();
+    updateScore();
 });
 
 socket.on("player:save:sync", data => {//TODO: send publicGame data from server
@@ -187,6 +189,10 @@ function renderDie(dots, pressed){
 function buildScoresheet(){
     middleBox.innerHTML = null;
     for(let i = 0; i < localScoreSheet.length; i++){
+        if(localScoreSheet[i].entryTitle === "bonus") {
+            bonus = localScoreSheet[i].points;
+            continue;
+        }
         const div = document.createElement("div");
         div.dataset.entryTitle = localScoreSheet[i].entryTitle;
         div.classList.add("score-item");
@@ -197,7 +203,10 @@ function buildScoresheet(){
         }
         else{
             if(localScoreSheet[i].selected) div.classList.add("selected");
-            else if(isSumEntry(localScoreSheet[i])) div.classList.add("sum-item");
+            else if(isSumEntry(localScoreSheet[i])){
+                div.classList.add("sum-item");
+                if(localScoreSheet[i].scoreEntry === "sum-nbr-bonus") div.classList.add("bonus");
+            }
             else div.classList.add("noclickable");
         }
         renderInnerEntry(i, div);
@@ -223,7 +232,7 @@ function refreshDice(){
 function isSumEntry(scoreEntry){
     return scoreEntry.entryTitle === "sum-comb" || 
     scoreEntry.entryTitle === "sum-nbr" ||
-    scoreEntry.entryTitle === "bonus";
+    scoreEntry.entryTitle === "sum-nbr-bonus";
 }
 
 function isClickable(scoreEntry){
@@ -240,18 +249,28 @@ function renderInnerEntry(i, div){
     renderInnerLogo(entryLogoDiv, div.dataset.entryTitle);
     div.appendChild(entryLogoDiv);
 
-    const entryDiceDiv = document.createElement("div");
-    entryDiceDiv.classList.add("score-item-inner-dice");
-    if(!isSumEntry(localScoreSheet[i])) renderInnerDice(i, entryDiceDiv);
-    div.appendChild(entryDiceDiv);
+    if(localScoreSheet[i].entryTitle === "sum-nbr-bonus"){
+        const bonusDivText = document.createElement("div");
+        bonusDivText.classList.add("score-item-points");
+        bonusDivText.innerHTML = localScoreSheet[i].points === null ? "0" : bonus;
+        const bonusDiv = document.createElement("div");
+        bonusDiv.appendChild(bonusDivText);
+        bonusDiv.classList.add("score-item-inner-points");
+        div.appendChild(bonusDiv);
+    }else{
+        const entryDiceDiv = document.createElement("div");
+        entryDiceDiv.classList.add("score-item-inner-dice");
+        if(!isSumEntry(localScoreSheet[i])) renderInnerDice(i, entryDiceDiv);
+        div.appendChild(entryDiceDiv);
+    }
 
     const entryScoreText = document.createElement("div");
     entryScoreText.classList.add("score-item-points");
     entryScoreText.innerHTML = localScoreSheet[i].points === null ? "0" : localScoreSheet[i].points;
     const entryScoreDiv = document.createElement("div");
     entryScoreDiv.appendChild(entryScoreText);
-
     entryScoreDiv.classList.add("score-item-inner-points");
+
     div.appendChild(entryScoreDiv);
 }
 

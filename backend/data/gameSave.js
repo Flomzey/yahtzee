@@ -2,6 +2,8 @@ import { nanoid, customAlphabet } from "nanoid";
 import { categories, reasons, states } from "./gameEnums.js";
 import { gameGo, publicGameGo } from "./gameObjects.js";
 import { gameDto } from "./dtos.js"
+import { check } from "zod";
+import { en } from "zod/v4/locales";
 
 let games = new Map();
 const alphabet = "0123456789";
@@ -166,15 +168,62 @@ export function setPlayerSocketId(gameId, playerId, newId){
 export function saveCategory(gameId, playerId, categoryTitle){
     if(!games.has(gameId)) return false;
     if(!games.get(gameId).players.has(playerId)) return false;
-    const player =  games.get(gameId).players.get(playerId);
+    const player = games.get(gameId).players.get(playerId);
     const scoreToChange = player.score.get(categoryTitle);
     if(scoreToChange.dice[1] !== null) return false;
     scoreToChange.dice = player.currentRoll;
     calculateCategoryScore(scoreToChange);
+    calculateSumScores(player.score);
+    calculateBonus(player.score);
+    player.totalPoints = 
+    player.score.get(categories.NBR_SUM_BONUS.key).points + 
+    player.score.get(categories.COMBINATION_SUM.key).points;
     return true;
 }
 
+function calculateSumScores(playerScore){
+    let sum = 0;
+    playerScore.forEach(entry => {
+        switch(entry.entryTitle){
+            case categories.NBR_SUM.key:
+                entry.points = sum;
+                sum = 0;
+            break;
+            case categories.COMBINATION_SUM.key:
+                entry.points = sum;
+                sum = 0;
+            break;
+            case categories.NBR_SUM_BONUS.key:
+                entry.points = sum;
+                sum = 0;
+            break;
+            case categories.BONUS.key:
+                if(sum >= 63){
+                    entry.points = categories.BONUS.number;
+                    sum += entry.points;
+                }
+                else entry.points = 0;
+            break;
+            default:
+                sum += entry.points;
+            break;
+        }
+        console.log(entry.entryTitle, entry.points)
+    });
+}
+
+function calculateBonus(playerScore){
+    const numbersum = playerScore.get(categories.NBR_SUM.key).points;
+    if(numbersum >= 63){
+        playerScore.get(categories.BONUS.key).points = categories.BONUS.number;
+        playerScore.get(categories.NBR_SUM_BONUS.key).points = numbersum + categories.BONUS.number;
+    }
+}
+
 function calculateCategoryScore(category){
+    category.points = 0;
+    let isRight = false;
+    let existingNumbers = new Array;
     switch(category.entryTitle){
         case categories.ONE.key:
         case categories.TWO.key:
@@ -182,7 +231,6 @@ function calculateCategoryScore(category){
         case categories.FOUR.key:
         case categories.FIVE.key:
         case categories.SIX.key:
-            category.points = 0;
             const categoryLookup = Object.fromEntries(
                 Object.values(categories)
                 .filter(c => typeof c.number === "number")
@@ -193,23 +241,97 @@ function calculateCategoryScore(category){
             });
         break;
         case categories.THREE_OF_A_KIND.key:
+            category.dice.forEach(die => {
+                category.points += die;
+                if(isRight) return;
+                if(existingNumbers.includes(die)) return;
+                else existingNumbers.push(die);
+                isRight = 
+                checkForMinRepeations(die, 3, category.dice);
+            });
+            if(!isRight) category.points = 0;
+        break;
         case categories.FOUR_OF_A_KIND.key:
-        
+            category.dice.forEach(die => {
+                category.points += die;
+                if(isRight) return;
+                if(existingNumbers.includes(die)) return;
+                else existingNumbers.push(die);
+                isRight = 
+                checkForMinRepeations(die, 4, category.dice);
+            });
+            if(!isRight) category.points = 0;
         break;
         case categories.FULL_HOUSE.key:
-        
+            category.dice.forEach(die => {
+                if(existingNumbers.includes(die)) return;
+                else existingNumbers.push(die);
+            });
+            if(existingNumbers.length > 2) return;
+            if(checkForRepeations(existingNumbers[0], 1, category.dice)) return;
+            category.points = categories.FULL_HOUSE.number;
         break;
         case categories.SMALL_STRAIGHT.key:
-
+            if(checkForBigStraight(category.dice)) category.points = categories.SMALL_STRAIGHT.number;
+            if(checkForSmlStraight(category.dice)) category.points = categories.SMALL_STRAIGHT.number;
         break;
         case categories.BIG_STRAIGHT.key:
-
+            if(checkForBigStraight(category.dice)) category.points = categories.BIG_STRAIGHT.number;
         break;
         case categories.YAHTZEE.key:
-
+            if(checkForMinRepeations(category.dice[0], 5, category.dice)) category.points = categories.YAHTZEE.number;
+        break;
+        case categories.CHANCE.key:
+            category.dice.forEach(die => {
+                category.points += die;
+            });
         break;
 
     }
+}
+
+function checkForMinRepeations(number, repetition, checkArray){
+    let count = 0;
+    checkArray.forEach(nbr => {
+        if(nbr === number) count++;
+    });
+    if(count >= repetition) return true;
+    return false;
+}
+
+function checkForRepeations(number, repetition, checkArray){
+    let count = 0;
+    checkArray.forEach(nbr => {
+        if(nbr === number) count++;
+    });
+    if(count === repetition) return true;
+    return false;
+}
+
+function checkForBigStraight(array){
+    return (
+        [1, 2, 3, 4, 5].every(nbr => array.includes(nbr)) || 
+        [2, 3, 4, 5, 6].every(nbr => array.includes(nbr))
+    );
+}
+
+function checkForSmlStraight(array){
+    const pos = [
+        [1, 2, 3, 4],
+        [2, 3, 4, 5],
+        [3, 4, 5, 6]
+    ];
+    let isSmStraight = false;
+    let count = 0;
+    pos.forEach(arr => {
+        if(isSmStraight) return;
+        arr.forEach(nbr => {
+            if(array.includes(nbr)) count++;
+        });
+        isSmStraight = count === 4;
+        count = 0;
+    });
+    return isSmStraight;
 }
 
 /**
