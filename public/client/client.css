@@ -111,6 +111,10 @@ body{
 .bonus{background-image: url("../images/combinations/bonus.png");}
 .sum{background-image: url("../images/combinations/sum.png");}
 .full-h{background-image: url("../images/combinations/full-h.png");}
+.yahtzee{background-image: url("../images/combinations/yahtzee.png");}
+.small-str{background-image: url("../images/combinations/small-str.png");}
+.big-str{background-image: url("../images/combinations/big-str.png");}
+.chance{background-image: url("../images/combinations/chance.png");}
 
 /*middle-box*/
 #middle-box{
