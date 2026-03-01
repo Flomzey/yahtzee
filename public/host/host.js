@@ -28,16 +28,30 @@ async function main(){
     socket.connect();
 }
 
-socket.on("connect:sync", player => {
-    players.push(player.playerName);
+socket.on("host:connect:sync", data => {
+    syncPlayers(data.game);
     updateList();
 });
 
-socket.on("reconnect:sync", player => {
-    if(players.find(arrayPlayer => arrayPlayer === player.playerName)) return;
-    players.push(player.playerName);
+socket.on("host:reconnect:sync", data => {
+    syncPlayers(data.game);
     updateList();
 });
+
+socket.on("connect:sync:public", data => {
+    syncPlayers(data.game);
+    updateList();
+});
+
+socket.on("reconnect:sync:public", data => {
+    syncPlayers(data.game);
+    updateList();
+});
+
+function syncPlayers(game){
+    players = game.players.map(player => player.playerName)
+    console.log(players);
+}
 
 async function createGame() {
     const res = await fetch("/api/game/create", {method:"POST"})

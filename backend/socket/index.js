@@ -61,26 +61,24 @@ function onDisconnect(socket, reason){
 function handleHostConnection(socket){
     const {gameId, role} = socket.handshake.auth;
 
-    const gameRes = gameSave.getGame(gameId);
-    const gameParse = gameGo.safeParse(gameRes.game);
+    const game = gameSave.getPublicGame(gameId);
     
-    if(!gameParse.success){
+    /*if(!gameParse.success){
         socket.disconnect();
         console.log(`[socket:onconnect:host] host ${gameId} dto parse error`);
         console.log(gameParse.error)
         return;
-    }
+    }*/
 
-    const game = gameParse.data;
     const isReconnect = !!game.socketId;
     gameSave.setGameSocketId(gameId, socket.id);
 
     if(isReconnect){
-        socket.emit("reconnect:sync", game); //TODO: use dto parse
+        socket.emit("host:reconnect:sync", game); //TODO: use dto parse
         console.log(`[socket:onconnect:host] host ${gameId} has reconnected`);
         return;
     }
-    socket.emit("reconnect:sync", game);
+    socket.emit("host:reconnect:sync", game);
     console.log(`[socket:onconnect:host] host ${gameId} has connected`);
 }
 
@@ -111,23 +109,19 @@ function handlePlayerConnection(socket){
     player.score = [...player.score.values()];
 
     if(isReconnect){
-        socket.to(gameId).emit("reconnect:sync:public", {
-            publicGame: publicGame
-        });
+        socket.to(gameId).emit("reconnect:sync:public", publicGame);
         socket.emit("reconnect:sync", {
             player: player,
-            publicGame: publicGame
+            publicGame: publicGame.game
         }); //TODO: use DTO parse
         console.log(`[socket:onconnect:player] player ${playerId} reconnected to ${gameId}`);
         return;
     }
 
-    socket.to(gameId).emit("connect:sync:public", {
-        publicGame: publicGame
-    });
+    socket.to(gameId).emit("connect:sync:public", publicGame);
     socket.emit("connect:sync", {
         player: player,
-        publicGame: publicGame
+        publicGame: publicGame.game
     });
     console.log(`[socket:onconnect:player] player ${playerId} connected to ${gameId}`);
 }

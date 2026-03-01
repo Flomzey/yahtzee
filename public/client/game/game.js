@@ -112,9 +112,9 @@ function syncLocalData(data){
         ...scoreEntry,
         selected: false
     }));
-    players = data.publicGame.game.players;
+    players = data.publicGame.players;
     if(localPlayer.isTurn) rollBtn.classList.remove("pressed");
-    //else rollBtn.classList.add("pressed");  first implement the whole game logic and logos
+    //else rollBtn.classList.add("pressed");  //first implement the whole game logic and logos
     localCurrentDice = localPlayer.currentRoll;
     buildScoresheet();
     updateScore();
@@ -123,12 +123,8 @@ function syncLocalData(data){
 function handleButtonPress(button){
     switch(button.id){
         case "roll-dice":
-            console.log(localCurrentDice);
             let reqDice = localCurrentDice;
-            console.log(selectedDice)
-            console.log(reqDice)
             for(let i = 0; i < selectedDice.length; i++){
-                console.log(i)
                 if(!selectedDice[i]){
                     reqDice[i] = null;
                 }
@@ -220,7 +216,7 @@ function unselectScoresheet(){
         if(entry.selected) entry.selected = false;
     });
     saveBtn.classList.add("pressed");
-    console.log(saveBtn);}
+}
 
 function refreshDice(){
     localCurrentDice = [null, null, null, null, null];
