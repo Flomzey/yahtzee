@@ -33,4 +33,4 @@ to get comfortable with having no-forced types.
 
 In the future I am planning to migrate the backend to Java, and the frontend to TypeScript, I did not yet decide the Frameworks though.
 
-This Project uses the BoldPixels font by YukiPixels thanks for contributing to my project!
+This Project uses a modified version of the BoldPixels font by YukiPixels thanks for contributing to my project!
