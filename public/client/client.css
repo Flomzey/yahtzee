@@ -100,12 +100,14 @@ body{
 }
 
 /*background pictures*/
-.eye1{background-image: url("../images/eyes/1.png")}
-.eye2{background-image: url("../images/eyes/2.png")}
-.eye3{background-image: url("../images/eyes/3.png")}
-.eye4{background-image: url("../images/eyes/4.png")}
-.eye5{background-image: url("../images/eyes/5.png")}
-.eye6{background-image: url("../images/eyes/6.png")}
+.eye1{background-image: url("../images/eyes/1.png");}
+.eye2{background-image: url("../images/eyes/2.png");}
+.eye3{background-image: url("../images/eyes/3.png");}
+.eye4{background-image: url("../images/eyes/4.png");}
+.eye5{background-image: url("../images/eyes/5.png");}
+.eye6{background-image: url("../images/eyes/6.png");}
+.three-oak{background-image: url("../images/combinations/three-oak.png");}
+.four-oak{background-image: url("../images/combinations/four-oak.png");}
 
 /*middle-box*/
 #middle-box{

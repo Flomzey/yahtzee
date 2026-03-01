@@ -283,24 +283,20 @@ function renderInnerDice(i, entryDiceDiv){
 
 function renderInnerLogo(entryLogoDiv, entryTitle){
     switch(entryTitle){
-        case "one":
-            entryLogoDiv.classList.add("eye1");
-            break;
-        case "two":
-            entryLogoDiv.classList.add("eye2");
-            break;
-        case "three":
-            entryLogoDiv.classList.add("eye3");
-            break;
-        case "four":
-            entryLogoDiv.classList.add("eye4");
-            break;
-        case "five":
-            entryLogoDiv.classList.add("eye5");
-            break;
-        case "six":
-            entryLogoDiv.classList.add("eye6");
-            break;
+        case "one": entryLogoDiv.classList.add("eye1");
+        break;
+        case "two": entryLogoDiv.classList.add("eye2");
+        break;
+        case "three": entryLogoDiv.classList.add("eye3");
+        break;
+        case "four": entryLogoDiv.classList.add("eye4");
+        break;
+        case "five": entryLogoDiv.classList.add("eye5");
+        break;
+        case "six": entryLogoDiv.classList.add("eye6");
+        break;
+        default: entryLogoDiv.classList.add(entryTitle);
+        
     }
 }
 
