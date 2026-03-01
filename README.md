@@ -16,7 +16,7 @@ But the data is caluclated entirely on the backend.
 
 Here is a picture of the finished Frontend:
 
-<img width="668" height="1154" alt="image" src="https://github.com/user-attachments/assets/68c06d70-3ced-4370-8579-53e98e83f6ea" />
+<img width="856" height="1482" alt="image" src="https://github.com/user-attachments/assets/c4c7bfac-05f5-4174-85f0-052d7c8cd805" />
 
 It is possible to roll, select, and save the die/score, the score is added up and the bonus is calculated.
 
