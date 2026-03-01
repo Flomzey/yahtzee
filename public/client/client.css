@@ -108,6 +108,9 @@ body{
 .eye6{background-image: url("../images/eyes/6.png");}
 .three-oak{background-image: url("../images/combinations/three-oak.png");}
 .four-oak{background-image: url("../images/combinations/four-oak.png");}
+.bonus{background-image: url("../images/combinations/bonus.png");}
+.sum{background-image: url("../images/combinations/sum.png");}
+.full-h{background-image: url("../images/combinations/full-h.png");}
 
 /*middle-box*/
 #middle-box{

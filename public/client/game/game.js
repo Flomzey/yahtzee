@@ -295,6 +295,12 @@ function renderInnerLogo(entryLogoDiv, entryTitle){
         break;
         case "six": entryLogoDiv.classList.add("eye6");
         break;
+        case "sum-nbr-bonus": entryLogoDiv.classList.add("bonus");
+        break;
+        case "sum-nbr":
+        case "sum-comb":
+            entryLogoDiv.classList.add("sum");
+        break;
         default: entryLogoDiv.classList.add(entryTitle);
         
     }
