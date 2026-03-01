@@ -29,8 +29,8 @@ const categories = {
     FIVE: { key: "five", number: 5 },
     SIX: { key: "six", number: 6 },
 
-    BONUS: { key: "bonus" , number: 35 },
     NBR_SUM: { key: "sum-nbr" },
+    BONUS: { key: "bonus" , number: 35 },
     NBR_SUM_BONUS: { key: "sum-nbr-bonus" },
 
     THREE_OF_A_KIND: { key: "three-oak" },
