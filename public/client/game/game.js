@@ -1,3 +1,5 @@
+import entryPrediction from "./entryPrediction.js"
+
 const middleBox = document.getElementById("middle-box");
 const scoreBox = document.getElementById("score-box");
 const clickableScoreItems = document.querySelectorAll(".score-item.clickable");
@@ -45,7 +47,7 @@ function addScoreListClickListeners(){
                         if(scoreEntry.selected) scoreEntry.selected = false;
                     }
                 });
-                if(localCurrentDice[1] !== null) saveBtn.classList.remove("pressed");
+                if(localCurrentDice[0] !== null) saveBtn.classList.remove("pressed");
                 buildScoresheet(); // have to rebuild the scoresheet to make changes effective
             });
         }
@@ -155,7 +157,7 @@ async function buttonAnimation(button){
 }
 
 function buildDiceRoll(){
-    if(localCurrentDice[1] === null) return;
+    if(localCurrentDice[0] === null) return;
     lowerRoll.innerHTML = null;
     upperRoll.innerHTML = null;
     let i = 0;
@@ -194,7 +196,7 @@ function buildScoresheet(){
         div.classList.add("score-item");
 
         if(isClickable(localScoreSheet[i])) {
-            if(localCurrentDice[1] === null) div.classList.add("noclickable");
+            if(localCurrentDice[0] === null) div.classList.add("noclickable");
             else div.classList.add("clickable");
         }
         else{
@@ -262,7 +264,8 @@ function renderInnerEntry(i, div){
 
     const entryScoreText = document.createElement("div");
     entryScoreText.classList.add("score-item-points");
-    entryScoreText.innerHTML = localScoreSheet[i].points === null ? "0" : localScoreSheet[i].points;
+    const predictedPoints = entryPrediction.calculateCategoryScore(localScoreSheet[i], localCurrentDice);
+    entryScoreText.innerHTML = localScoreSheet[i].points === null ? predictedPoints : localScoreSheet[i].points;
     const entryScoreDiv = document.createElement("div");
     if(isSumEntry(localScoreSheet[i])) entryScoreDiv.classList.add("score-item-inner-sum-points");
     else entryScoreDiv.classList.add("score-item-inner-points");
