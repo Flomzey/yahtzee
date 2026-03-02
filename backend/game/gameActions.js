@@ -10,11 +10,10 @@ export default{
  * before sent array will have new random integers instead
  * of the null elements
  */
-function rollDice(rollArray){
-    const res = new Array;
+function rollDice(rollArray, currentRoll){
+    const res = currentRoll;
     for(let i = 0; i < rollArray.length; i++){
         if(!rollArray[i]) res[i] = getRandomInt(6);
-        else res[i] = rollArray[i];
     }
     return res;
 }

@@ -19,7 +19,8 @@ export default{
     getPublicGame,
     ifPlayerExists,
     updateCurrentRoll,
-    saveCategory
+    saveCategory,
+    getCurrentRoll
 }
 
 /**
@@ -156,6 +157,10 @@ export function getPublicGame(gameId){
         game: resGame,
         reason: reasons.SUCCESS
     }
+}
+
+export function getCurrentRoll(gameId, playerId){
+    return games.get(gameId).players.get(playerId).currentRoll;
 }
 
 export function setPlayerSocketId(gameId, playerId, newId){

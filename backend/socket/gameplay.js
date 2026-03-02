@@ -7,7 +7,8 @@ export default function gameHandlers(socket, io){
         const {gameId, playerId, role} = socket.handshake.auth;
         if(role !== "player") return;
         if(!gameSave.ifPlayerExists(gameId, playerId)) return;
-        const newRoll = gameActions.rollDice(data);
+        const currentRoll = gameSave.getCurrentRoll(gameId, playerId);
+        const newRoll = gameActions.rollDice(data, currentRoll);
         gameSave.updateCurrentRoll(gameId, playerId, newRoll);
         socket.emit("player:roll:res", newRoll);
     });
