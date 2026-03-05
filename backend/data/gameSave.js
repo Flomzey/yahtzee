@@ -20,7 +20,9 @@ export default{
     ifPlayerExists,
     updateCurrentRoll,
     saveCategory,
-    getCurrentRoll
+    getCurrentRoll,
+    updateRollingPlayer,
+    startGame
 }
 
 /**
@@ -170,6 +172,36 @@ export function setPlayerSocketId(gameId, playerId, newId){
     return true;
 }
 
+export function updateRollingPlayer(gameId){
+    const res = getGame(gameId);
+    if(!res.ok) return false;
+    const game = res.game;
+    if(game.roundsLeft === 0) return false;
+    const players = game.players;
+    const playerIds =  Array.from(players.keys());
+    for (let i = 0; i < playerIds.length; i++) {
+        if(i === --playerIds.length){
+            players.get(playerIds[i]).isTurn = false;
+            players.get(playerIds[0]).isTurn = true;
+            game.roundsLeft--;
+        }
+        if(players.get(playerIds[i]).isTurn){
+            players.get(playerIds[i]).isTurn = false;
+            players.get(playerIds[i+1]).isTurn = true;
+        }
+    }
+    return true;
+}
+
+export function startGame(gameId){
+    const res = getGame(gameId);
+    if(!res.ok) return false;
+    const game = res.game;
+    const playerIds = Array.from(game.players.keys());
+    game.players.get(playerIds[0]).isTurn = true;
+    return true;
+}
+
 export function saveCategory(gameId, playerId, categoryTitle){
     if(!games.has(gameId)) return false;
     if(!games.get(gameId).players.has(playerId)) return false;
@@ -311,6 +343,8 @@ function checkForRepeations(number, repetition, checkArray){
     if(count === repetition) return true;
     return false;
 }
+
+
 
 function checkForBigStraight(array){
     return (

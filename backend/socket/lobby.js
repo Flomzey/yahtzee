@@ -14,6 +14,16 @@ export default function lobbyHandlers(socket, io){
         io.to(gameId).emit("player:joined", res.player.playerName);
     });
 
+    socket.on("lobby:start", () => {
+        {gameId, role} socket.handshake.auth;
+        if(role !== "host") return;
+        if(!gameSave.startGame(gameId)) return;
+        const publicGame = gameSave.getPublicGame(gameId);
+        socket.to(gameId).emit("game:starts", {
+            publicGame: publicGame
+        })
+    });
+
     socket.on("lobby:disconnect", () => {
         
     });

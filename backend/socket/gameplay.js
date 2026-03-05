@@ -20,6 +20,8 @@ export default function gameHandlers(socket, io){
         gameSave.saveCategory(gameId, playerId, category);
         gameSave.updateCurrentRoll(gameId, playerId, [null, null, null, null, null]);
 
+        if(!gameSave.updateRollingPlayer(gameId)) return;
+
         const playerres = gameSave.getPlayer(gameId, playerId);
 
         const publicGame = gameSave.getPublicGame(gameId);
@@ -46,4 +48,6 @@ export default function gameHandlers(socket, io){
             publicGame: publicGame
         });
     })
+
+    
 }
